@@ -1,5 +1,8 @@
 package metricsink
 
+// Forked from github.com/afex/hystrix-go
+// Some parts of this file have been modified to make it functional in this package
+
 import (
 	"crypto/tls"
 	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
