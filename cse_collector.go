@@ -1,11 +1,15 @@
 package metricsink
 
+// Forked from github.com/afex/hystrix-go
+// Some parts of this file have been modified to make it functional in this package
+
 import (
 	"crypto/tls"
 	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
 	"github.com/rcrowley/go-metrics"
 	"net/http"
 	"time"
+	"github.com/ServiceComb/go-chassis/metrics"
 )
 
 // CseCollector is a struct to keeps metric information of Http requests
