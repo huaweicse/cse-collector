@@ -1,0 +1,29 @@
+{
+	"version": 0,
+	"dependencies": [
+	        {
+    			"importpath": "github.com/rcrowley/go-metrics",
+    			"repository": "https://github.com/rcrowley/go-metrics",
+    			"vcs": "git",
+    			"revision": "ab2277b1c5d15c3cba104e9cbddbdfc622df5ad8",
+    			"branch": "HEAD",
+    			"notests": true
+    		},
+                     		{
+                     			"importpath": "github.com/stretchr/testify",
+                     			"repository": "https://github.com/stretchr/testify",
+                     			"vcs": "git",
+                     			"revision": "87b1dfb5b2fa649f52695dd9eae19abe404a4308",
+                     			"branch": "HEAD",
+                     			"notests": true
+                     		},
+                             		{
+                             			"importpath": "gopkg.in/yaml.v2",
+                             			"repository": "https://github.com/go-yaml/yaml",
+                             			"vcs": "git",
+                             			"revision": "a5b47d31c556af34a302ce5d659e6fea44d90de0",
+                             			"branch": "HEAD",
+                             			"notests": true
+                             		}
+	]
+}

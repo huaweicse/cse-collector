@@ -7,8 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/ServiceComb/auth"
-	"github.com/ServiceComb/go-chassis/core/common"
-	"github.com/ServiceComb/go-chassis/core/config"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -22,6 +20,7 @@ const (
 	IdleConnsPerHost  = 100
 	DefaultTimeout    = time.Second * 20
 	MetricsPath       = "/csemonitor/metric"
+	EnvProjectID      = "CSE_PROJECT_ID"
 )
 
 // variables for cse-collector
@@ -37,10 +36,10 @@ type CseMonitorClient struct {
 }
 
 // NewCseMonitorClient creates an new client for monitoring
-func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config) *CseMonitorClient {
+func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config, version string) *CseMonitorClient {
 	var apiVersion string
 
-	switch config.GlobalDefinition.Cse.Monitor.Client.APIVersion.Version {
+	switch version {
 	case "v1":
 		apiVersion = "v1"
 	case "V1":
@@ -69,7 +68,7 @@ func updateAPIPath(apiVersion string) {
 
 	//Check for the env Name in Container to get Domain Name
 	//Default value is  "default"
-	projectID, isExsist := os.LookupEnv(common.EnvProjectID)
+	projectID, isExsist := os.LookupEnv(EnvProjectID)
 	if !isExsist {
 		projectID = "default"
 	}

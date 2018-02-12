@@ -9,7 +9,6 @@ import (
 	"github.com/rcrowley/go-metrics"
 	"net/http"
 	"time"
-	"github.com/ServiceComb/go-chassis/metrics"
 )
 
 // CseCollector is a struct to keeps metric information of Http requests
