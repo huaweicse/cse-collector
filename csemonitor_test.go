@@ -60,7 +60,7 @@ func TestCseMonitor(t *testing.T) {
 	assert := assert.New(t)
 	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{})
 	config.SelfServiceName = "testService"
-	monitorData := reporter.getData()
+	monitorData := reporter.getData("default", "0.0.1", "testService")
 	assert.Equal(monitorData.Name, "testService")
 
 }
@@ -79,7 +79,7 @@ func TestCseMonitor2(t *testing.T) {
 	metricCollector.IncrementShortCircuits()
 	metricCollector.UpdateTotalDuration(time.Second)
 
-	monitorData := reporter.getData()
+	monitorData := reporter.getData("default", "0.0.1", "testService")
 	assert.Equal(monitorData.Interfaces[0].Total, int64(1))
 	assert.Equal(monitorData.Interfaces[0].Failure, int64(1))
 	assert.Equal(monitorData.Interfaces[0].ShortCircuited, int64(1))
@@ -91,11 +91,11 @@ func TestCseMonitorClient_PostMetrics(t *testing.T) {
 	assert := assert.New(t)
 	config.SelfServiceName = "testService"
 	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{})
-	cseMonitClient := NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, "http://127.0.0.1:9098", &tls.Config{})
+	cseMonitClient := NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, "http://127.0.0.1:9098", &tls.Config{}, "v2")
 	assert.Equal(cseMonitClient.URL, "http://127.0.0.1:9098")
 	assert.Equal(cseMonitClient.Header, http.Header{"Content-Type": []string{"application/json"}})
 	config.GlobalDefinition.Cse.Monitor.Client.Enable = false
-	err := cseMonitClient.PostMetrics(reporter.getData())
+	err := cseMonitClient.PostMetrics(reporter.getData("default", "0.0.1", "Server"))
 	assert.NotNil(err)
 
 	config.GlobalDefinition.Cse.Monitor.Client.Enable = true
@@ -109,7 +109,7 @@ func TestCseMonitorClient_PostMetrics(t *testing.T) {
 		fmt.Fprintln(w, "Hello client")
 	}))
 	defer ts.Close()
-	cseMonitClient = NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, ts.URL, &tls.Config{})
+	cseMonitClient = NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, ts.URL, &tls.Config{}, "v2")
 	err = cseMonitClient.PostMetrics(MonitorData{
 		Name:     "testService",
 		Instance: "BLRY23283",
@@ -120,7 +120,7 @@ func TestCseMonitorClient_PostMetrics(t *testing.T) {
 		fmt.Fprintln(w, "Hello client")
 	}))
 	defer ts1.Close()
-	cseMonitClient = NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, ts1.URL, &tls.Config{})
+	cseMonitClient = NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, ts1.URL, &tls.Config{}, "v2")
 	err = cseMonitClient.PostMetrics(MonitorData{
 		Name:     "testService",
 		Instance: "BLRY23283",

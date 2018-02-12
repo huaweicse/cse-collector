@@ -3,7 +3,6 @@ package metricsink
 import (
 	"crypto/tls"
 	"github.com/ServiceComb/go-chassis/core/archaius"
-	"github.com/ServiceComb/go-chassis/core/config"
 	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/rcrowley/go-metrics"
 	"net/http"
@@ -45,7 +44,7 @@ func CseMonitor(r metrics.Registry, addr string, header http.Header, interval ti
 // Run creates a go_routine which runs continously and capture the monitoring data
 func (reporter *Reporter) Run() {
 	ticker := time.Tick(reporter.Interval)
-	metricsAPI := NewCseMonitorClient(reporter.Header, reporter.CseMonitorAddr, reporter.TLSConfig)
+	metricsAPI := NewCseMonitorClient(reporter.Header, reporter.CseMonitorAddr, reporter.TLSConfig, "v2")
 	IsMonitoringConnected = true
 	isConnctedForFirstTime := false
 
@@ -53,7 +52,7 @@ func (reporter *Reporter) Run() {
 
 		//If monitoring is enabled then only try to connect to Monitoring Server
 		if archaius.GetBool("cse.monitor.client.enable", true) {
-			monitorData := reporter.getData()
+			monitorData := reporter.getData("default", "0.0.1", "Server")
 			err := metricsAPI.PostMetrics(monitorData)
 			if err != nil {
 				//If the connection fails for the first time then print Warn Logs
@@ -76,11 +75,11 @@ func (reporter *Reporter) Run() {
 		}
 	}
 }
-func (reporter *Reporter) getData() MonitorData {
+func (reporter *Reporter) getData(app, version, service string) MonitorData {
 	var monitorData = NewMonitorData()
-	monitorData.AppID = config.GlobalDefinition.AppID
-	monitorData.Version = config.SelfVersion
-	monitorData.Name = config.SelfServiceName
+	monitorData.AppID = app
+	monitorData.Version = version
+	monitorData.Name = service
 	monitorData.Instance, _ = os.Hostname()
 	monitorData.Memory = getProcessInfo()
 	monitorData.Thread = threadCreateProfile.Count()
