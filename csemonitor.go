@@ -22,23 +22,25 @@ type Reporter struct {
 	Interval       time.Duration
 	Percentiles    []float64
 	TLSConfig      *tls.Config
+	app            string
+	version        string
+	service        string
 }
 
-// NewReporter creates a New reporter for monitoring
-func NewReporter(r metrics.Registry, addr string, header http.Header, interval time.Duration, tls *tls.Config) *Reporter {
-	return &Reporter{
+// NewReporter creates a new monitoring object for CSE type collections
+func NewReporter(r metrics.Registry, addr string, header http.Header, interval time.Duration, tls *tls.Config, app, version, service string) *Reporter {
+	reporter := &Reporter{
 		Registry:       r,
 		CseMonitorAddr: addr,
 		Header:         header,
 		Interval:       interval,
 		Percentiles:    []float64{0.5, 0.75, 0.95, 0.99, 0.999},
 		TLSConfig:      tls,
+		app:            app,
+		version:        version,
+		service:        service,
 	}
-}
-
-// CseMonitor creates a new monitoring object for CSE type collections
-func CseMonitor(r metrics.Registry, addr string, header http.Header, interval time.Duration, tls *tls.Config) {
-	NewReporter(r, addr, header, interval, tls).Run()
+	return reporter
 }
 
 // Run creates a go_routine which runs continously and capture the monitoring data
@@ -52,7 +54,7 @@ func (reporter *Reporter) Run() {
 
 		//If monitoring is enabled then only try to connect to Monitoring Server
 		if archaius.GetBool("cse.monitor.client.enable", true) {
-			monitorData := reporter.getData("default", "0.0.1", "Server")
+			monitorData := reporter.getData(reporter.app, reporter.version, reporter.service)
 			err := metricsAPI.PostMetrics(monitorData)
 			if err != nil {
 				//If the connection fails for the first time then print Warn Logs
