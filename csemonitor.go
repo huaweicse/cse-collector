@@ -43,7 +43,7 @@ func NewReporter(r metrics.Registry, addr string, header http.Header, interval t
 	return reporter
 }
 
-// Run creates a go_routine which runs continously and capture the monitoring data
+// Run creates a go_routine which runs continuously and capture the monitoring data
 func (reporter *Reporter) Run() {
 	ticker := time.Tick(reporter.Interval)
 	metricsAPI := NewCseMonitorClient(reporter.Header, reporter.CseMonitorAddr, reporter.TLSConfig, "v2")
