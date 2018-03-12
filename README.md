@@ -1,4 +1,5 @@
 ### Metric Collector for Go-Chassis
+[![Build Status](https://travis-ci.org/ServiceComb/cse-collector.svg?branch=master)](https://travis-ci.org/ServiceComb/cse-collector)
 This a metric collector for Go-Chassis which collects metrics of the microservices. 
 It can collect metrics for each api's exposed by the micro-services. The same data can be 
 exposed to Huawei CSE Governance Dashboard.
