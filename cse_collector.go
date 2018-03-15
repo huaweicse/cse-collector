@@ -5,10 +5,11 @@ package metricsink
 
 import (
 	"crypto/tls"
-	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
-	"github.com/rcrowley/go-metrics"
 	"net/http"
 	"time"
+
+	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
+	"github.com/rcrowley/go-metrics"
 )
 
 // CseCollector is a struct to keeps metric information of Http requests
@@ -39,8 +40,8 @@ type CseCollectorConfig struct {
 }
 
 // InitializeCseCollector starts the CSE collector in a new Thread
-func InitializeCseCollector(config *CseCollectorConfig, r metrics.Registry, app, version, service string) {
-	go NewReporter(r, config.CseMonitorAddr, config.Header, config.TimeInterval, config.TLSConfig, app, version, service).Run()
+func InitializeCseCollector(config *CseCollectorConfig, r metrics.Registry, app, version, service, env string) {
+	go NewReporter(r, config.CseMonitorAddr, config.Header, config.TimeInterval, config.TLSConfig, app, version, service, env).Run()
 }
 
 // NewCseCollector creates a new Collector Object

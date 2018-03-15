@@ -1,26 +1,28 @@
 package metricsink
 
 import (
-	"github.com/rcrowley/go-metrics"
 	"runtime"
 	"runtime/pprof"
 	"strings"
 	"time"
+
+	"github.com/rcrowley/go-metrics"
 )
 
 var threadCreateProfile = pprof.Lookup("threadcreate")
 
 // MonitorData is an object which stores the monitoring information for an application
 type MonitorData struct {
-	AppID      string                 `json:"appId"`
-	Version    string                 `json:"version"`
-	Name       string                 `json:"name"`
-	Instance   string                 `json:"instance"`
-	Thread     int                    `json:"thread"`
-	Customs    map[string]interface{} `json:"customs"` // ?
-	Interfaces []*InterfaceInfo       `json:"interfaces"`
-	CPU        float64                `json:"cpu"`
-	Memory     map[string]interface{} `json:"memory"`
+	AppID       string                 `json:"appId"`
+	Version     string                 `json:"version"`
+	Name        string                 `json:"name"`
+	Environment string                 `json:"environment"`
+	Instance    string                 `json:"instance"`
+	Thread      int                    `json:"thread"`
+	Customs     map[string]interface{} `json:"customs"` // ?
+	Interfaces  []*InterfaceInfo       `json:"interfaces"`
+	CPU         float64                `json:"cpu"`
+	Memory      map[string]interface{} `json:"memory"`
 }
 
 // InterfaceInfo is an object which store the monitoring information of a particular interface
