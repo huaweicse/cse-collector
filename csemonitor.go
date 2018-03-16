@@ -2,13 +2,14 @@ package metricsink
 
 import (
 	"crypto/tls"
-	"github.com/ServiceComb/go-chassis/core/archaius"
-	"github.com/ServiceComb/go-chassis/core/lager"
-	"github.com/rcrowley/go-metrics"
 	"net/http"
 	"os"
 	"runtime"
 	"time"
+
+	"github.com/ServiceComb/go-chassis/core/archaius"
+	"github.com/ServiceComb/go-chassis/core/lager"
+	"github.com/rcrowley/go-metrics"
 )
 
 // IsMonitoringConnected is a boolean to keep an check if there exsist any succeful connection to monitoring Server
@@ -25,10 +26,11 @@ type Reporter struct {
 	app            string
 	version        string
 	service        string
+	environment    string
 }
 
 // NewReporter creates a new monitoring object for CSE type collections
-func NewReporter(r metrics.Registry, addr string, header http.Header, interval time.Duration, tls *tls.Config, app, version, service string) *Reporter {
+func NewReporter(r metrics.Registry, addr string, header http.Header, interval time.Duration, tls *tls.Config, app, version, service, env string) *Reporter {
 	reporter := &Reporter{
 		Registry:       r,
 		CseMonitorAddr: addr,
@@ -39,6 +41,7 @@ func NewReporter(r metrics.Registry, addr string, header http.Header, interval t
 		app:            app,
 		version:        version,
 		service:        service,
+		environment:    env,
 	}
 	return reporter
 }
@@ -54,7 +57,7 @@ func (reporter *Reporter) Run() {
 
 		//If monitoring is enabled then only try to connect to Monitoring Server
 		if archaius.GetBool("cse.monitor.client.enable", true) {
-			monitorData := reporter.getData(reporter.app, reporter.version, reporter.service)
+			monitorData := reporter.getData(reporter.app, reporter.version, reporter.service, reporter.environment)
 			err := metricsAPI.PostMetrics(monitorData)
 			if err != nil {
 				//If the connection fails for the first time then print Warn Logs
@@ -77,11 +80,12 @@ func (reporter *Reporter) Run() {
 		}
 	}
 }
-func (reporter *Reporter) getData(app, version, service string) MonitorData {
+func (reporter *Reporter) getData(app, version, service, env string) MonitorData {
 	var monitorData = NewMonitorData()
 	monitorData.AppID = app
 	monitorData.Version = version
 	monitorData.Name = service
+	monitorData.Environment = env
 	monitorData.Instance, _ = os.Hostname()
 	monitorData.Memory = getProcessInfo()
 	monitorData.Thread = threadCreateProfile.Count()
