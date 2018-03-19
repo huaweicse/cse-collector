@@ -18,13 +18,13 @@ func init() {
 func reportMetricsToCSEDashboard(r metrics.Registry) error {
 	metricCollector.Registry.Register(NewCseCollector)
 
-	monitorServerURL, err := chassisMetrics.GetMonitorEndpoint()
+	monitorServerURL, err := getMonitorEndpoint()
 	if err != nil {
 		lager.Logger.Warn("Get Monitoring URL failed, CSE monitoring function disabled", err)
 		return nil
 	}
 
-	tlsConfig, tlsError := chassisMetrics.GetTLSForClient(monitorServerURL)
+	tlsConfig, tlsError := getTLSForClient(monitorServerURL)
 	if tlsError != nil {
 		lager.Logger.Errorf(tlsError, "Get %s.%s TLS config failed.", monitorServerURL, common.Consumer)
 		return tlsError
@@ -32,7 +32,7 @@ func reportMetricsToCSEDashboard(r metrics.Registry) error {
 
 	InitializeCseCollector(&CseCollectorConfig{
 		CseMonitorAddr: monitorServerURL,
-		Header:         chassisMetrics.GetAuthHeaders(),
+		Header:         getAuthHeaders(),
 		TimeInterval:   time.Second * 2,
 		TLSConfig:      tlsConfig,
 	}, r, config.GlobalDefinition.AppID, config.SelfVersion, config.SelfServiceName,
