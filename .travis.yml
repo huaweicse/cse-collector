@@ -34,6 +34,3 @@ jobs:
       script:
         - go get github.com/fzipp/gocyclo
         - bash -x scripts/travis/goCycloChecker.sh
-    - stage: Unit Test
-      script:
-        - bash -x scripts/travis/unit_test.sh 
