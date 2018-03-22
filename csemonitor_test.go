@@ -50,7 +50,7 @@ func initEnv() {
 func TestNewReporter(t *testing.T) {
 	initEnv()
 	assert := assert.New(t)
-	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server")
+	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server", "", "")
 	assert.Equal(reporter.Interval, time.Second)
 	assert.Equal(reporter.CseMonitorAddr, "127.0.0.1:8080")
 	assert.Equal(reporter.Header, http.Header{"Content-Type": []string{"application/json"}})
@@ -58,16 +58,16 @@ func TestNewReporter(t *testing.T) {
 func TestCseMonitor(t *testing.T) {
 	initEnv()
 	assert := assert.New(t)
-	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server")
+	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server", "", "")
 	config.SelfServiceName = "testService"
-	monitorData := reporter.getData("default", "0.0.1", "testService")
+	monitorData := reporter.getData("default", "0.0.1", "testService", "", "", "")
 	assert.Equal(monitorData.Name, "testService")
 
 }
 func TestCseMonitor2(t *testing.T) {
 	initEnv()
 	assert := assert.New(t)
-	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server")
+	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server", "", "")
 	metricCollector := NewCseCollector("source.Provider.Microservice.SchemaID.OperationId")
 	config.SelfServiceName = "testService"
 
@@ -79,7 +79,7 @@ func TestCseMonitor2(t *testing.T) {
 	metricCollector.IncrementShortCircuits()
 	metricCollector.UpdateTotalDuration(time.Second)
 
-	monitorData := reporter.getData("default", "0.0.1", "testService")
+	monitorData := reporter.getData("default", "0.0.1", "testService", "", "", "")
 	assert.Equal(monitorData.Interfaces[0].Total, int64(1))
 	assert.Equal(monitorData.Interfaces[0].Failure, int64(1))
 	assert.Equal(monitorData.Interfaces[0].ShortCircuited, int64(1))
@@ -90,12 +90,12 @@ func TestCseMonitorClient_PostMetrics(t *testing.T) {
 	initEnv()
 	assert := assert.New(t)
 	config.SelfServiceName = "testService"
-	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server")
+	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server", "", "")
 	cseMonitClient := NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, "http://127.0.0.1:9098", &tls.Config{}, "v2")
 	assert.Equal(cseMonitClient.URL, "http://127.0.0.1:9098")
 	assert.Equal(cseMonitClient.Header, http.Header{"Content-Type": []string{"application/json"}})
 	config.GlobalDefinition.Cse.Monitor.Client.Enable = false
-	err := cseMonitClient.PostMetrics(reporter.getData("default", "0.0.1", "Server"))
+	err := cseMonitClient.PostMetrics(reporter.getData("default", "0.0.1", "Server", "", "", ""))
 	assert.NotNil(err)
 
 	config.GlobalDefinition.Cse.Monitor.Client.Enable = true

@@ -23,6 +23,8 @@ type MonitorData struct {
 	Interfaces  []*InterfaceInfo       `json:"interfaces"`
 	CPU         float64                `json:"cpu"`
 	Memory      map[string]interface{} `json:"memory"`
+	ServiceID   string                 `json:"serviceId"`
+	InstanceID  string                 `json:"instanceId"`
 }
 
 // InterfaceInfo is an object which store the monitoring information of a particular interface
