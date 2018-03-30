@@ -6,7 +6,9 @@ import (
 	"strings"
 	"time"
 
+	"fmt"
 	"github.com/rcrowley/go-metrics"
+	"strconv"
 )
 
 var threadCreateProfile = pprof.Lookup("threadcreate")
@@ -97,9 +99,13 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 			interfaceInfo.L99 = int(ps[5] / float64(time.Millisecond))
 			interfaceInfo.L995 = int(ps[6] / float64(time.Millisecond))
 			interfaceInfo.Latency = int(t.Mean() / float64(time.Millisecond))
-			interfaceInfo.QPS = t.Rate1()
+			movingAverageFor3Precision, err := strconv.ParseFloat(fmt.Sprintf("%.3f", t.Rate1()), 64)
+			if err == nil {
+				interfaceInfo.QPS = movingAverageFor3Precision
+			} else {
+				interfaceInfo.QPS = 0
+			}
 		}
-
 	}
 	if interfaceInfo.Total == 0 {
 		interfaceInfo.Rate = 100
