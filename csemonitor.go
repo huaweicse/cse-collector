@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"runtime"
+	"strings"
 	"time"
 
 	"github.com/ServiceComb/go-chassis/core/archaius"
@@ -60,9 +61,21 @@ func (reporter *Reporter) Run() {
 
 		//If monitoring is enabled then only try to connect to Monitoring Server
 		if archaius.GetBool("cse.monitor.client.enable", true) {
-			instances, err := registry.RegistryService.GetMicroServiceInstances(reporter.serviceID, reporter.serviceID)
+			instances, err := registry.DefaultServiceDiscoveryService.GetMicroServiceInstances(reporter.serviceID, reporter.serviceID)
 			if err != nil {
-				lager.Logger.Errorf(err, "failed to get the instance list")
+				if strings.Contains(err.Error(), "Micro-service does not exist") {
+					var serviceID string
+					for {
+						serviceID, err = registry.DefaultServiceDiscoveryService.GetMicroServiceID(reporter.app,
+							reporter.service, reporter.version, reporter.environment)
+						if serviceID != "" {
+							break
+						}
+					}
+					reporter.serviceID = serviceID
+				} else {
+					lager.Logger.Errorf(err, "failed to get the instance list")
+				}
 			}
 
 			for _, instance := range instances {
