@@ -50,6 +50,7 @@ type InterfaceInfo struct {
 	SemaphoreRejected    int64   `json:"semaphoreRejected"`
 	ThreadPoolRejected   int64   `json:"threadPoolRejected"`
 	CountTimeout         int64   `json:"countTimeout"`
+	FailureRate          int64   `json:"failureRate"`
 	successCount         int64
 }
 
@@ -109,8 +110,15 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 	}
 	if interfaceInfo.Total == 0 {
 		interfaceInfo.Rate = 100
+		interfaceInfo.FailureRate = 0
 	} else {
 		interfaceInfo.Rate = float64(interfaceInfo.successCount) / float64(interfaceInfo.Total)
+		totalErrorCount := interfaceInfo.Failure + interfaceInfo.SemaphoreRejected + interfaceInfo.ThreadPoolRejected + interfaceInfo.CountTimeout
+		if totalErrorCount == 0 {
+			interfaceInfo.FailureRate = 0
+		} else {
+			interfaceInfo.FailureRate = totalErrorCount / interfaceInfo.Total
+		}
 	}
 }
 
