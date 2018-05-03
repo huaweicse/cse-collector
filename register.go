@@ -20,7 +20,7 @@ func reportMetricsToCSEDashboard(r metrics.Registry) error {
 
 	monitorServerURL, err := getMonitorEndpoint()
 	if err != nil {
-		lager.Logger.Warn("Get Monitoring URL failed, CSE monitoring function disabled", err)
+		lager.Logger.Warnf("Get Monitoring URL failed, CSE monitoring function disabled, err: %v", err)
 		return nil
 	}
 
