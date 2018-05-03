@@ -41,7 +41,7 @@ func getTLSForClient(monitorURL string) (*tls.Config, error) {
 		}
 		return nil, err
 	}
-	lager.Logger.Warnf(nil, "%s TLS mode, verify peer: %t, cipher plugin: %s",
+	lager.Logger.Warnf("%s TLS mode, verify peer: %t, cipher plugin: %s",
 		sslTag, sslConfig.VerifyPeer, sslConfig.CipherPlugin)
 
 	return tlsConfig, nil
@@ -70,7 +70,7 @@ func getMonitorEndpoint() (string, error) {
 	if monitorEndpoint == "" {
 		monitorURL, err := endpoint.GetEndpointFromServiceCenter("default", "CseMonitoring", "latest")
 		if err != nil {
-			lager.Logger.Warn("empty monitor server endpoint, please provide the monitor server endpoint", err)
+			lager.Logger.Warnf("empty monitor server endpoint, please provide the monitor server endpoint, err: %v", err)
 			return "", err
 		}
 

@@ -84,7 +84,7 @@ func (reporter *Reporter) Run() {
 				if err != nil {
 					//If the connection fails for the first time then print Warn Logs
 					if IsMonitoringConnected {
-						lager.Logger.Warnf(err, "Unable to connect to monitoring server")
+						lager.Logger.Warnf("Unable to connect to monitoring server, err: %v", err)
 					}
 					IsMonitoringConnected = false
 				} else {
