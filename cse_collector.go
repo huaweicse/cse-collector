@@ -40,8 +40,8 @@ type CseCollectorConfig struct {
 }
 
 // InitializeCseCollector starts the CSE collector in a new Thread
-func InitializeCseCollector(config *CseCollectorConfig, r metrics.Registry, app, version, service, env, serviceID string) {
-	go NewReporter(r, config.CseMonitorAddr, config.Header, config.TimeInterval, config.TLSConfig, app, version, service, env, serviceID).Run()
+func InitializeCseCollector(config *CseCollectorConfig, r metrics.Registry, app, version, service, env string) {
+	go NewReporter(r, config.CseMonitorAddr, config.Header, config.TimeInterval, config.TLSConfig, app, version, service, env).Run()
 }
 
 // NewCseCollector creates a new Collector Object
