@@ -77,6 +77,14 @@ func (c *CseCollector) updateTimerMetric(prefix string, dur time.Duration) {
 	count.Update(dur)
 }
 
+func (c *CseCollector) cleanMetric(prefix string) {
+	count, ok := metrics.GetOrRegister(prefix, metrics.NewCounter).(metrics.Counter)
+	if !ok {
+		return
+	}
+	count.Clear()
+}
+
 // IncrementAttempts function increments the number of calls to this circuit.
 // This registers as a counter
 func (c *CseCollector) IncrementAttempts() {
@@ -148,4 +156,14 @@ func (c *CseCollector) UpdateRunDuration(runDuration time.Duration) {
 }
 
 // Reset function is a noop operation in this collector.
-func (c *CseCollector) Reset() {}
+func (c *CseCollector) Reset() {
+	c.cleanMetric(c.attempts)
+	c.cleanMetric(c.failures)
+	c.cleanMetric(c.successes)
+	c.cleanMetric(c.shortCircuits)
+	c.cleanMetric(c.errors)
+	c.cleanMetric(c.rejects)
+	c.cleanMetric(c.timeouts)
+	c.cleanMetric(c.fallbackSuccesses)
+	c.cleanMetric(c.fallbackFailures)
+}

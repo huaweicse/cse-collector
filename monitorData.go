@@ -1,14 +1,15 @@
 package metricsink
 
 import (
+	"fmt"
+	"math"
 	"runtime"
 	"runtime/pprof"
+	"strconv"
 	"strings"
 	"time"
 
-	"fmt"
 	"github.com/rcrowley/go-metrics"
-	"strconv"
 )
 
 var threadCreateProfile = pprof.Lookup("threadcreate")
@@ -73,6 +74,7 @@ func (monitorData *MonitorData) getOrCreateInterfaceInfo(name string) *Interface
 	monitorData.Interfaces = append(monitorData.Interfaces, interfaceInfo)
 	return interfaceInfo
 }
+
 func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) {
 	var interfaceInfo = monitorData.getOrCreateInterfaceInfo(getInterfaceName(name))
 	switch metric := i.(type) {
@@ -87,6 +89,15 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 		case "successes":
 			interfaceInfo.successCount = metric.Count()
 		}
+
+		qps := (float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1)))
+		movingAverageFor3Precision, err := strconv.ParseFloat(fmt.Sprintf("%.3f", qps), 64)
+		if err == nil {
+			interfaceInfo.QPS = movingAverageFor3Precision
+		} else {
+			interfaceInfo.QPS = 0
+		}
+
 	case metrics.Timer:
 		t := metric.Snapshot()
 		ps := t.Percentiles([]float64{0.05, 0.25, 0.5, 0.75, 0.90, 0.99, 0.995})
@@ -100,12 +111,6 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 			interfaceInfo.L99 = int(ps[5] / float64(time.Millisecond))
 			interfaceInfo.L995 = int(ps[6] / float64(time.Millisecond))
 			interfaceInfo.Latency = int(t.Mean() / float64(time.Millisecond))
-			movingAverageFor3Precision, err := strconv.ParseFloat(fmt.Sprintf("%.3f", t.Rate1()), 64)
-			if err == nil {
-				interfaceInfo.QPS = movingAverageFor3Precision
-			} else {
-				interfaceInfo.QPS = 0
-			}
 		}
 	}
 	if interfaceInfo.Total == 0 {

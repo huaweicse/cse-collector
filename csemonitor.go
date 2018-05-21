@@ -11,6 +11,7 @@ import (
 	"github.com/ServiceComb/go-chassis/core/config"
 	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/ServiceComb/go-chassis/core/registry"
+	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
 	"github.com/rcrowley/go-metrics"
 )
 
@@ -51,6 +52,20 @@ func NewReporter(r metrics.Registry, addr string, header http.Header, interval t
 
 // Run creates a go_routine which runs continuously and capture the monitoring data
 func (reporter *Reporter) Run() {
+
+	go reporter.postData()
+	go reporter.cleanData()
+
+}
+
+func (reporter *Reporter) cleanData() {
+	ticker := time.Tick(20 * time.Second)
+	for range ticker {
+		hystrix.Flush()
+	}
+}
+
+func (reporter *Reporter) postData() {
 	ticker := time.Tick(reporter.Interval)
 	metricsAPI := NewCseMonitorClient(reporter.Header, reporter.CseMonitorAddr, reporter.TLSConfig, "v2")
 	IsMonitoringConnected = true
