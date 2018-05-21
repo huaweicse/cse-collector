@@ -36,7 +36,7 @@ func reportMetricsToCSEDashboard(r metrics.Registry) error {
 		TimeInterval:   time.Second * 2,
 		TLSConfig:      tlsConfig,
 	}, r, config.GlobalDefinition.AppID, config.SelfVersion, config.SelfServiceName,
-		config.MicroserviceDefinition.ServiceDescription.Environment, config.SelfServiceID)
+		config.MicroserviceDefinition.ServiceDescription.Environment)
 	lager.Logger.Infof("Started sending metric Data to Monitor Server : %s", monitorServerURL)
 	return nil
 }

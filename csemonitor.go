@@ -5,10 +5,10 @@ import (
 	"net/http"
 	"os"
 	"runtime"
-	"strings"
 	"time"
 
 	"github.com/ServiceComb/go-chassis/core/archaius"
+	"github.com/ServiceComb/go-chassis/core/config"
 	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/ServiceComb/go-chassis/core/registry"
 	"github.com/rcrowley/go-metrics"
@@ -33,7 +33,7 @@ type Reporter struct {
 }
 
 // NewReporter creates a new monitoring object for CSE type collections
-func NewReporter(r metrics.Registry, addr string, header http.Header, interval time.Duration, tls *tls.Config, app, version, service, env, serviceID string) *Reporter {
+func NewReporter(r metrics.Registry, addr string, header http.Header, interval time.Duration, tls *tls.Config, app, version, service, env string) *Reporter {
 	reporter := &Reporter{
 		Registry:       r,
 		CseMonitorAddr: addr,
@@ -45,7 +45,6 @@ func NewReporter(r metrics.Registry, addr string, header http.Header, interval t
 		version:        version,
 		service:        service,
 		environment:    env,
-		serviceID:      serviceID,
 	}
 	return reporter
 }
@@ -61,25 +60,21 @@ func (reporter *Reporter) Run() {
 
 		//If monitoring is enabled then only try to connect to Monitoring Server
 		if archaius.GetBool("cse.monitor.client.enable", true) {
-			instances, err := registry.DefaultServiceDiscoveryService.GetMicroServiceInstances(reporter.serviceID, reporter.serviceID)
-			if err != nil {
-				if strings.Contains(err.Error(), "Micro-service does not exist") {
-					var serviceID string
-					for {
-						serviceID, err = registry.DefaultServiceDiscoveryService.GetMicroServiceID(reporter.app,
-							reporter.service, reporter.version, reporter.environment)
-						if serviceID != "" {
-							break
-						}
-					}
-					reporter.serviceID = serviceID
-				} else {
-					lager.Logger.Errorf(err, "failed to get the instance list")
-				}
+			reporter.serviceID = config.SelfServiceID
+
+			instances, ok := registry.SelfInstancesCache.Get(reporter.serviceID)
+
+			if !ok {
+				lager.Logger.Warnf("get SelfInstancesCache failed for, sid: %s", reporter.serviceID)
 			}
 
-			for _, instance := range instances {
-				monitorData := reporter.getData(reporter.app, reporter.version, reporter.service, reporter.environment, reporter.serviceID, instance.InstanceID)
+			instanceIDs, ok := instances.([]string)
+			if !ok {
+				lager.Logger.Warnf("type asserts failed, sid: %s", reporter.serviceID)
+			}
+
+			for _, instance := range instanceIDs {
+				monitorData := reporter.getData(reporter.app, reporter.version, reporter.service, reporter.environment, reporter.serviceID, instance)
 				err := metricsAPI.PostMetrics(monitorData)
 				if err != nil {
 					//If the connection fails for the first time then print Warn Logs
