@@ -53,3 +53,101 @@ cse:
       enable: true
 ```
 
+#### Data Post
+
+Every 2 sec data will be posted to monitoring server if serverUri is correct and enable is true
+
+The data formate after post 
+```
+[
+    [
+        {
+            "time": 1526905902632,
+            "appId": "default",
+            "version": "0.0.1",
+            "qps": 0.16,
+            "latency": 0,
+            "failureRate": 0,
+            "total": 2,
+            "breakerRateAgg": 0,
+            "circuitBreakerOpen": false,
+            "failure": 0,
+            "shortCircuited": 0,
+            "semaphoreRejected": 0,
+            "threadPoolRejected": 0,
+            "countTimeout": 0,
+            "l995": 0,
+            "l99": 0,
+            "l90": 0,
+            "l75": 0,
+            "l50": 0,
+            "l25": 0,
+            "l5": 0,
+            "instanceId": "6a0895085cf211e8bb850255ac105551",
+            "thread": 11,
+            "cpu": 4,
+            "memory": {
+                "heapAlloc": 2294040,
+                "heapIdle": 1671168,
+                "heapInUse": 3768320,
+                "heapObjects": 19609,
+                "heapReleased": 0,
+                "heapSys": 5439488
+            },
+            "functionCount": 1,
+            "customs": null,
+            "name": "root1-ThinkPad-T440p"
+        }
+    ]
+]
+
+```
+
+#### Data Flush
+
+Every 10sec data will be flushed
+```
+[
+    [
+        {
+            "time": 1526905933600,
+            "appId": "default",
+            "version": "0.0.1",
+            "qps": 0,
+            "latency": 0,
+            "failureRate": 0,
+            "total": 0,
+            "breakerRateAgg": 0,
+            "circuitBreakerOpen": false,
+            "failure": 0,
+            "shortCircuited": 0,
+            "semaphoreRejected": 0,
+            "threadPoolRejected": 0,
+            "countTimeout": 0,
+            "l995": 0,
+            "l99": 0,
+            "l90": 0,
+            "l75": 0,
+            "l50": 0,
+            "l25": 0,
+            "l5": 0,
+            "instanceId": "6a0895085cf211e8bb850255ac105551",
+            "thread": 11,
+            "cpu": 4,
+            "memory": {
+                "heapAlloc": 2649632,
+                "heapIdle": 1597440,
+                "heapInUse": 3874816,
+                "heapObjects": 24737,
+                "heapReleased": 0,
+                "heapSys": 5472256
+            },
+            "functionCount": 1,
+            "customs": null,
+            "name": "root1-ThinkPad-T440p"
+        }
+    ]
+]
+```
+
+If perticular micro service has more than one instance and if request has been sent to perticular instance then only for that instance all the value should change.
