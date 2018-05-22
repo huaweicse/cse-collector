@@ -51,7 +51,7 @@ type InterfaceInfo struct {
 	SemaphoreRejected    int64   `json:"semaphoreRejected"`
 	ThreadPoolRejected   int64   `json:"threadPoolRejected"`
 	CountTimeout         int64   `json:"countTimeout"`
-	FailureRate          int64   `json:"failureRate"`
+	FailureRate          float64 `json:"failureRate"`
 	successCount         int64
 }
 
@@ -82,7 +82,7 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 		switch getEventType(name) {
 		case "attempts":
 			interfaceInfo.Total = metric.Count()
-		case "failures":
+		case "errors":
 			interfaceInfo.Failure = metric.Count()
 		case "shortCircuits":
 			interfaceInfo.ShortCircuited = metric.Count()
@@ -122,7 +122,12 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 		if totalErrorCount == 0 {
 			interfaceInfo.FailureRate = 0
 		} else {
-			interfaceInfo.FailureRate = totalErrorCount / interfaceInfo.Total
+			failureRate, errr := strconv.ParseFloat(fmt.Sprintf("%.3f", float64(totalErrorCount)/float64(interfaceInfo.Total)), 64)
+			if errr == nil {
+				interfaceInfo.FailureRate = failureRate
+			} else {
+				interfaceInfo.FailureRate = 0
+			}
 		}
 	}
 }
