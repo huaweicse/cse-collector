@@ -52,20 +52,7 @@ func NewReporter(r metrics.Registry, addr string, header http.Header, interval t
 
 // Run creates a go_routine which runs continuously and capture the monitoring data
 func (reporter *Reporter) Run() {
-
-	go reporter.postData()
-	go reporter.cleanData()
-
-}
-
-func (reporter *Reporter) cleanData() {
-	ticker := time.Tick(20 * time.Second)
-	for range ticker {
-		hystrix.Flush()
-	}
-}
-
-func (reporter *Reporter) postData() {
+	var count int
 	ticker := time.Tick(reporter.Interval)
 	metricsAPI := NewCseMonitorClient(reporter.Header, reporter.CseMonitorAddr, reporter.TLSConfig, "v2")
 	IsMonitoringConnected = true
@@ -108,6 +95,14 @@ func (reporter *Reporter) postData() {
 						lager.Logger.Infof("Connection recovered successfully to monitoring server")
 					}
 					IsMonitoringConnected = true
+				}
+
+				if len(monitorData.Interfaces) != 0 {
+					count++
+					if count == 10 {
+						hystrix.Flush()
+						count = 0
+					}
 				}
 			}
 		}
