@@ -47,7 +47,7 @@ type InterfaceInfo struct {
 	Total                int64   `json:"total"`
 	Failure              int64   `json:"failure"`
 	ShortCircuited       int64   `json:"shortCircuited"`
-	IsCircuitBreakerOpen bool    `json:"isCircuitBreakerOpen"`
+	IsCircuitBreakerOpen bool    `json:"circuitBreakerOpen"`
 	SemaphoreRejected    int64   `json:"semaphoreRejected"`
 	ThreadPoolRejected   int64   `json:"threadPoolRejected"`
 	CountTimeout         int64   `json:"countTimeout"`
@@ -88,6 +88,10 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 			interfaceInfo.ShortCircuited = metric.Count()
 		case "successes":
 			interfaceInfo.successCount = metric.Count()
+		}
+
+		if interfaceInfo.ShortCircuited != 0 {
+			interfaceInfo.IsCircuitBreakerOpen = true
 		}
 
 		qps := (float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1)))
