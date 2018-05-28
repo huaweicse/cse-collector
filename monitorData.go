@@ -92,6 +92,9 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 
 		if interfaceInfo.ShortCircuited != 0 {
 			interfaceInfo.IsCircuitBreakerOpen = true
+			if interfaceInfo.Failure != 0 && interfaceInfo.Failure >= interfaceInfo.ShortCircuited {
+				interfaceInfo.Failure -= interfaceInfo.ShortCircuited
+			}
 		}
 
 		qps := (float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1)))
