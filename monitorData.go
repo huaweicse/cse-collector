@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/rcrowley/go-metrics"
 )
 
@@ -126,10 +127,11 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 		if totalErrorCount == 0 {
 			interfaceInfo.FailureRate = 0
 		} else {
-			failureRate, errr := strconv.ParseFloat(fmt.Sprintf("%.3f", float64(totalErrorCount)/float64(interfaceInfo.Total)), 64)
-			if errr == nil {
+			failureRate, err := strconv.ParseFloat(fmt.Sprintf("%.3f", float64(totalErrorCount)/float64(interfaceInfo.Total)), 64)
+			if err == nil && failureRate > 0 {
 				interfaceInfo.FailureRate = failureRate
 			} else {
+				lager.Logger.Warnf("Error in calculating the failureRate %v, default value(0) is assigned to failureRate", failureRate)
 				interfaceInfo.FailureRate = 0
 			}
 		}
