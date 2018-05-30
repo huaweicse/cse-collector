@@ -127,7 +127,7 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 			interfaceInfo.FailureRate = 0
 		} else {
 			failureRate, errr := strconv.ParseFloat(fmt.Sprintf("%.3f", float64(totalErrorCount)/float64(interfaceInfo.Total)), 64)
-			if errr == nil {
+			if errr == nil && failureRate > 0 {
 				interfaceInfo.FailureRate = failureRate
 			} else {
 				interfaceInfo.FailureRate = 0
