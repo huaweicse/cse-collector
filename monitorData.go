@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ServiceComb/go-chassis/core/lager"
+	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
 	"github.com/rcrowley/go-metrics"
 )
 
@@ -91,8 +92,11 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 			interfaceInfo.successCount = metric.Count()
 		}
 
-		if interfaceInfo.ShortCircuited != 0 {
+		cb, _, _ := hystrix.GetCircuit(getInterfaceName(name))
+		if cb.IsOpen() {
 			interfaceInfo.IsCircuitBreakerOpen = true
+		} else {
+			interfaceInfo.IsCircuitBreakerOpen = false
 		}
 
 		qps := (float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1)))
