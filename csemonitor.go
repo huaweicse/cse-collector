@@ -67,12 +67,14 @@ func (reporter *Reporter) Run() {
 			instances, ok := registry.SelfInstancesCache.Get(reporter.serviceID)
 
 			if !ok {
-				lager.Logger.Warnf("get SelfInstancesCache failed for, sid: %s", reporter.serviceID)
+				lager.Logger.Warnf("waiting for instance registration: [%s]", reporter.serviceID)
+				continue
 			}
 
 			instanceIDs, ok := instances.([]string)
 			if !ok {
-				lager.Logger.Warnf("type asserts failed, sid: %s", reporter.serviceID)
+				lager.Logger.Warnf("type assert of instance failed, sid: %s", reporter.serviceID)
+				continue
 			}
 
 			for _, instance := range instanceIDs {
