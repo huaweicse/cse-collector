@@ -11,7 +11,6 @@ import (
 	"github.com/ServiceComb/go-chassis/core/config"
 	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/ServiceComb/go-chassis/core/registry"
-	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
 	"github.com/rcrowley/go-metrics"
 )
 
@@ -102,7 +101,11 @@ func (reporter *Reporter) Run() {
 				if len(monitorData.Interfaces) != 0 {
 					count++
 					if count == 10 {
-						hystrix.Flush()
+						reporter.Registry.Each(func(s string, i interface{}) {
+							if c, ok := i.(metrics.Counter); ok {
+								c.Clear()
+							}
+						})
 						count = 0
 					}
 				}
