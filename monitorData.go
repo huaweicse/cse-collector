@@ -92,11 +92,10 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 			interfaceInfo.successCount = metric.Count()
 		}
 
-		cb, _, _ := hystrix.GetCircuit(getInterfaceName(name))
-		if cb.IsOpen() {
-			interfaceInfo.IsCircuitBreakerOpen = true
-		} else {
+		if isCBOpen, err := hystrix.IsCircuitBreakerOpen(getInterfaceName(name)); err != nil {
 			interfaceInfo.IsCircuitBreakerOpen = false
+		} else {
+			interfaceInfo.IsCircuitBreakerOpen = isCBOpen
 		}
 
 		qps := (float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1)))
