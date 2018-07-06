@@ -121,11 +121,10 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 			interfaceInfo.Latency = int(t.Mean() / float64(time.Millisecond))
 		}
 	}
+	interfaceInfo.Rate = 1 //rate is no use any more and must be set to 1
 	if interfaceInfo.Total == 0 {
-		interfaceInfo.Rate = 100
 		interfaceInfo.FailureRate = 0
 	} else {
-		interfaceInfo.Rate = float64(interfaceInfo.successCount) / float64(interfaceInfo.Total)
 		totalErrorCount := interfaceInfo.Failure + interfaceInfo.SemaphoreRejected + interfaceInfo.ThreadPoolRejected + interfaceInfo.CountTimeout
 		if totalErrorCount == 0 {
 			interfaceInfo.FailureRate = 0
