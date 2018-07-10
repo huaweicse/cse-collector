@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"github.com/ServiceComb/go-chassis/core/archaius"
-	"github.com/ServiceComb/go-chassis/core/config"
 	"github.com/ServiceComb/go-chassis/core/lager"
 	"github.com/ServiceComb/go-chassis/core/registry"
+	runtime2 "github.com/ServiceComb/go-chassis/pkg/runtime"
 	"github.com/rcrowley/go-metrics"
 )
 
@@ -61,7 +61,7 @@ func (reporter *Reporter) Run() {
 
 		//If monitoring is enabled then only try to connect to Monitoring Server
 		if archaius.GetBool("cse.monitor.client.enable", true) {
-			reporter.serviceID = config.SelfServiceID
+			reporter.serviceID = runtime2.ServiceID
 
 			instances, ok := registry.SelfInstancesCache.Get(reporter.serviceID)
 
