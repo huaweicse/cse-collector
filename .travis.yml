@@ -1,6 +1,6 @@
 language: go
 sudo: required
-go: 
+go:
   - 1.8.3
 install: true
 
@@ -15,11 +15,11 @@ jobs:
     - stage: Format Checker
       script: bash -x scripts/travis/formatChecker.sh
     - stage: DeadCode Checker
-      script: 
+      script:
         - go get -u github.com/tsenart/deadcode
         - bash -x scripts/travis/deadCodeChecker.sh
     - stage: Misspell Checker
-      script: 
+      script:
         - go get -u github.com/client9/misspell
         - bash -x scripts/travis/misspellChecker.sh
     - stage: GoConst Checker
@@ -34,3 +34,6 @@ jobs:
       script:
         - go get github.com/fzipp/gocyclo
         - bash -x scripts/travis/goCycloChecker.sh
+    - stage: Unit Test
+      script:
+        - bash -x scripts/travis/unit_test.sh

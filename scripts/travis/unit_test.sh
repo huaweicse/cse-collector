@@ -1,46 +1,29 @@
 #!/bin/sh
 set -e
 
-go get -u github.com/FiloSottile/gvt
-mkdir -p $GOPATH/src/github.com/fsnotify
-mkdir -p $GOPATH/src/github.com/spf13
-mkdir -p $GOPATH/src/golang.org/x
-
-gvt restore
-
+go get github.com/rcrowley/go-metrics
+go get github.com/stretchr/testify/assert
 go get gopkg.in/yaml.v2
+go get github.com/Masterminds/glide
 
-cd $GOPATH/src/github.com/ServiceComb
-git clone https://github.com/ServiceComb/go-chassis.git
-git clone https://github.com/ServiceComb/go-archaius.git
-git clone https://github.com/ServiceComb/paas-lager.git
-git clone https://github.com/ServiceComb/auth.git
+mkdir -p $HOME/gopath/src/github.com/ServiceComb/
+cd $HOME/gopath/src/github.com/ServiceComb
+git clone http://github.com/ServiceComb/go-chassis
+cd $HOME/gopath/src/github.com/ServiceComb/go-chassis
+glide install
+mkdir -p $HOME/gopath/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector/
+rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector/
+export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector/
+cd $HOME/gopath/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector/
 
-cd $GOPATH/src/github.com/fsnotify
-git clone https://github.com/fsnotify/fsnotify.git
-cd fsnotify
-git reset --hard 629574ca2a5df945712d3079857300b5e4da0236
 
-cd $GOPATH/src/github.com/spf13
-git clone https://github.com/spf13/cast.git
-cd cast
-git reset --hard acbeb36b902d72a7a4c18e8f3241075e7ab763e4
-
-mkdir -p $GOPATH/src/github.com/stathat
-
-cd $GOPATH/src/github.com/stathat
-git clone https://github.com/stathat/go.git
-
-cd $GOPATH/src/golang.org/x
-git clone https://github.com/golang/sys.git
-
-cd $GOPATH/src/github.com/ServiceComb/cse-collector
+cd $GOPATH/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector
 #Start unit test
 for d in $(go list ./...); do
     echo $d
     echo $GOPATH
     cd $GOPATH/src/$d
     if [ $(ls | grep _test.go | wc -l) -gt 0 ]; then
-        go test 
+        go test
     fi
 done
