@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ServiceComb/auth"
+	"github.com/go-chassis/auth"
 	"io/ioutil"
 	"net"
 	"net/http"

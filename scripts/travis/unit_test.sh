@@ -6,18 +6,18 @@ go get github.com/stretchr/testify/assert
 go get gopkg.in/yaml.v2
 go get github.com/Masterminds/glide
 
-mkdir -p $HOME/gopath/src/github.com/ServiceComb/
-cd $HOME/gopath/src/github.com/ServiceComb
-git clone http://github.com/ServiceComb/go-chassis
-cd $HOME/gopath/src/github.com/ServiceComb/go-chassis
+mkdir -p $HOME/gopath/src/github.com/go-chassis/
+cd $HOME/gopath/src/github.com/go-chassis
+git clone http://github.com/go-chassis/go-chassis
+cd $HOME/gopath/src/github.com/go-chassis/go-chassis
 glide install
-mkdir -p $HOME/gopath/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector/
-rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector/
-export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector/
-cd $HOME/gopath/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector/
+mkdir -p $HOME/gopath/src/github.com/go-chassis/go-chassis/vendor/github.com/huaweicse/cse-collector/
+rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/go-chassis/go-chassis/vendor/github.com/huaweicse/cse-collector/
+export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/go-chassis/go-chassis/vendor/github.com/huaweicse/cse-collector/
+cd $HOME/gopath/src/github.com/go-chassis/go-chassis/vendor/github.com/huaweicse/cse-collector/
 
 
-cd $GOPATH/src/github.com/ServiceComb/go-chassis/vendor/github.com/ServiceComb/cse-collector
+cd $GOPATH/src/github.com/go-chassis/go-chassis/vendor/github.com/huaweicse/cse-collector
 #Start unit test
 for d in $(go list ./...); do
     echo $d

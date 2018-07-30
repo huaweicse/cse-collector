@@ -7,10 +7,10 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/ServiceComb/go-chassis/core/archaius"
-	"github.com/ServiceComb/go-chassis/core/lager"
-	"github.com/ServiceComb/go-chassis/core/registry"
-	runtime2 "github.com/ServiceComb/go-chassis/pkg/runtime"
+	"github.com/go-chassis/go-chassis/core/archaius"
+	"github.com/go-chassis/go-chassis/core/lager"
+	"github.com/go-chassis/go-chassis/core/registry"
+	runtime2 "github.com/go-chassis/go-chassis/pkg/runtime"
 	"github.com/rcrowley/go-metrics"
 )
 
