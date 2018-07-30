@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
+	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
 	"github.com/rcrowley/go-metrics"
 )
 

@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ServiceComb/go-chassis/core/lager"
-	"github.com/ServiceComb/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
+	"github.com/go-chassis/go-chassis/core/lager"
+	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
 	"github.com/rcrowley/go-metrics"
 )
 

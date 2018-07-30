@@ -5,10 +5,10 @@ go:
 install: true
 
 before_script:
-  - mkdir -p $HOME/gopath/src/github.com/ServiceComb/cse-collector
-  - rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/ServiceComb/cse-collector/
-  - export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/ServiceComb/cse-collector
-  - cd $HOME/gopath/src/github.com/ServiceComb/cse-collector
+  - mkdir -p $HOME/gopath/src/github.com/huaweicse/cse-collector
+  - rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/huaweicse/cse-collector/
+  - export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/huaweicse/cse-collector
+  - cd $HOME/gopath/src/github.com/huaweicse/cse-collector
 
 jobs:
   include:
