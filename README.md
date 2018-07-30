@@ -4,6 +4,14 @@ This a metric collector for Go-Chassis which collects metrics of the microservic
 It can collect metrics for each api's exposed by the micro-services. The same data can be 
 exposed to Huawei CSE Governance Dashboard.
 
+# How to use 
+
+in main.go
+```go
+import _ "github.com/huaweicse/cse-collector"
+```
+
+# Introdction
 The metrics collected by this collector is listed below:
 ```
 attempts
