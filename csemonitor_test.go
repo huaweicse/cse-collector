@@ -3,16 +3,17 @@ package metricsink
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/go-chassis/go-chassis/core/config"
-	"github.com/go-chassis/go-chassis/core/config/model"
-	"github.com/go-chassis/go-chassis/core/lager"
-	"github.com/rcrowley/go-metrics"
-	"github.com/stretchr/testify/assert"
 	"gopkg.in/yaml.v2"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 	"time"
+
+	"github.com/go-chassis/go-chassis/core/config"
+	"github.com/go-chassis/go-chassis/core/config/model"
+	"github.com/go-chassis/go-chassis/core/lager"
+	"github.com/rcrowley/go-metrics"
+	"github.com/stretchr/testify/assert"
 )
 
 var globalConf = `
@@ -91,11 +92,12 @@ func TestCseMonitorClient_PostMetrics(t *testing.T) {
 	assert := assert.New(t)
 	config.SelfServiceName = "testService"
 	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server", "")
-	cseMonitClient := NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, "http://127.0.0.1:9098", &tls.Config{}, "v2")
+	cseMonitClient, err := NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, "http://127.0.0.1:9098", &tls.Config{}, "v2")
+	assert.NoError(err)
 	assert.Equal(cseMonitClient.URL, "http://127.0.0.1:9098")
 	assert.Equal(cseMonitClient.Header, http.Header{"Content-Type": []string{"application/json"}})
 	config.GlobalDefinition.Cse.Monitor.Client.Enable = false
-	err := cseMonitClient.PostMetrics(reporter.getData("default", "0.0.1", "Server", "", "", ""))
+	err = cseMonitClient.PostMetrics(reporter.getData("default", "0.0.1", "Server", "", "", ""))
 	assert.NotNil(err)
 
 	config.GlobalDefinition.Cse.Monitor.Client.Enable = true
@@ -109,7 +111,8 @@ func TestCseMonitorClient_PostMetrics(t *testing.T) {
 		fmt.Fprintln(w, "Hello client")
 	}))
 	defer ts.Close()
-	cseMonitClient = NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, ts.URL, &tls.Config{}, "v2")
+	cseMonitClient, err = NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, ts.URL, &tls.Config{}, "v2")
+	assert.NoError(err)
 	err = cseMonitClient.PostMetrics(MonitorData{
 		Name:     "testService",
 		Instance: "BLRY23283",
@@ -120,7 +123,8 @@ func TestCseMonitorClient_PostMetrics(t *testing.T) {
 		fmt.Fprintln(w, "Hello client")
 	}))
 	defer ts1.Close()
-	cseMonitClient = NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, ts1.URL, &tls.Config{}, "v2")
+	cseMonitClient, err = NewCseMonitorClient(http.Header{"Content-Type": []string{"application/json"}}, ts1.URL, &tls.Config{}, "v2")
+	assert.Nil(err)
 	err = cseMonitClient.PostMetrics(MonitorData{
 		Name:     "testService",
 		Instance: "BLRY23283",

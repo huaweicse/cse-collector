@@ -1,17 +1,16 @@
 package metricsink
 
 import (
-	"bytes"
 	"crypto/tls"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"github.com/go-chassis/auth"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/go-chassis/go-chassis/pkg/httpclient"
 )
 
 // constant for the cse-collector
@@ -32,11 +31,11 @@ var (
 type CseMonitorClient struct {
 	Header http.Header
 	URL    string
-	Client *http.Client
+	Client *httpclient.URLClient
 }
 
 // NewCseMonitorClient creates an new client for monitoring
-func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config, version string) *CseMonitorClient {
+func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config, version string) (*CseMonitorClient, error) {
 	var apiVersion string
 
 	switch version {
@@ -53,14 +52,19 @@ func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config, 
 	}
 	//Update the API Base Path based on the Version
 	updateAPIPath(apiVersion)
+
+	c, err := httpclient.GetURLClient(&httpclient.URLClientOption{
+		TLSConfig:             tlsConfig,
+		ResponseHeaderTimeout: DefaultTimeout,
+	})
+	if err != nil {
+		return nil, err
+	}
 	return &CseMonitorClient{
 		Header: header,
 		URL:    url,
-		Client: &http.Client{
-			Transport: TransportFor(tlsConfig),
-			Timeout:   DefaultTimeout,
-		},
-	}
+		Client: c,
+	}, nil
 }
 
 // updateAPIPath Update the Base PATH and HEADERS Based on the version of MetricServer used.
@@ -86,12 +90,11 @@ func updateAPIPath(apiVersion string) {
 
 // PostMetrics is a functions which sends the monintoring data to monitoring Server
 func (cseMonitorClient *CseMonitorClient) PostMetrics(monitorData MonitorData) (err error) {
-
 	var (
 		js      []byte
-		req     *http.Request
 		resp    *http.Response
 		postURL string
+		h       http.Header
 	)
 
 	if js, err = json.Marshal(monitorData); err != nil {
@@ -99,20 +102,12 @@ func (cseMonitorClient *CseMonitorClient) PostMetrics(monitorData MonitorData) (
 	}
 
 	postURL = cseMonitorClient.URL + MetricServerPath + "?service=" + monitorData.Name
-
-	if req, err = http.NewRequest("POST", postURL, bytes.NewBuffer(js)); err != nil {
-		return
-	}
-	req.Header = make(http.Header)
+	h = make(http.Header)
 	for k, v := range cseMonitorClient.Header {
-		req.Header[k] = v
+		h[k] = v
 	}
 
-	if err = auth.AddAuthInfo(req); err != nil {
-		return errors.New("Add auth info failed, err: " + err.Error())
-	}
-
-	if resp, err = cseMonitorClient.Client.Do(req); err != nil {
+	if resp, err = cseMonitorClient.Client.HTTPDo(http.MethodPost, postURL, h, js); err != nil {
 		return
 	}
 	defer resp.Body.Close()
