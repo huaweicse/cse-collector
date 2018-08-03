@@ -54,6 +54,7 @@ func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config, 
 	updateAPIPath(apiVersion)
 
 	c, err := httpclient.GetURLClient(&httpclient.URLClientOption{
+		SSLEnabled:            tlsConfig != nil,
 		TLSConfig:             tlsConfig,
 		ResponseHeaderTimeout: DefaultTimeout,
 	})
