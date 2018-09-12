@@ -1,13 +1,14 @@
 package metricsink
 
 import (
+	"time"
+
 	"github.com/go-chassis/go-chassis/core/common"
 	"github.com/go-chassis/go-chassis/core/config"
 	"github.com/go-chassis/go-chassis/core/lager"
 	chassisMetrics "github.com/go-chassis/go-chassis/metrics"
 	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
 	"github.com/rcrowley/go-metrics"
-	"time"
 )
 
 func init() {
@@ -26,7 +27,7 @@ func reportMetricsToCSEDashboard(r metrics.Registry) error {
 
 	tlsConfig, tlsError := getTLSForClient(monitorServerURL)
 	if tlsError != nil {
-		lager.Logger.Errorf(tlsError, "Get %s.%s TLS config failed.", monitorServerURL, common.Consumer)
+		lager.Logger.Errorf("Get %s.%s TLS config failed,error : %s", monitorServerURL, common.Consumer, tlsError)
 		return tlsError
 	}
 

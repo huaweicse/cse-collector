@@ -55,7 +55,7 @@ func (reporter *Reporter) Run() {
 	ticker := time.Tick(reporter.Interval)
 	metricsAPI, err := NewCseMonitorClient(reporter.Header, reporter.CseMonitorAddr, reporter.TLSConfig, "v2")
 	if err != nil {
-		lager.Logger.Errorf(err, "Get cse monitor client failed")
+		lager.Logger.Errorf("Get cse monitor client failed:%s", err)
 	}
 	IsMonitoringConnected = true
 	isConnctedForFirstTime := false
