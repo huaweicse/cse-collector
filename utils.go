@@ -25,7 +25,7 @@ const (
 func getTLSForClient(monitorURL string) (*tls.Config, error) {
 	monitorServerURL, err := url.Parse(monitorURL)
 	if err != nil {
-		lager.Logger.Error("Error occurred while parsing Monitor Server Uri", err)
+		lager.Logger.Error("Error occurred while parsing Monitor Server Uri" + err.Error())
 		return nil, err
 	}
 	scheme := monitorServerURL.Scheme
