@@ -7,7 +7,7 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/go-chassis/go-chassis/core/archaius"
+	"github.com/go-chassis/go-archaius"
 	"github.com/go-chassis/go-chassis/core/lager"
 	"github.com/go-chassis/go-chassis/core/registry"
 	runtime2 "github.com/go-chassis/go-chassis/pkg/runtime"
