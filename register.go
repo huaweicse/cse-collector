@@ -7,7 +7,6 @@ import (
 	"github.com/go-chassis/go-chassis/core/config"
 	"github.com/go-chassis/go-chassis/core/lager"
 	chassisMetrics "github.com/go-chassis/go-chassis/metrics"
-	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
 	"github.com/rcrowley/go-metrics"
 )
 
@@ -17,7 +16,6 @@ func init() {
 
 //reportMetricsToCSEDashboard use go-metrics to send metrics to cse dashboard
 func reportMetricsToCSEDashboard(r metrics.Registry) error {
-	metricCollector.Registry.Register(NewCseCollector)
 
 	monitorServerURL, err := getMonitorEndpoint()
 	if err != nil {

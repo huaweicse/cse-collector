@@ -14,6 +14,8 @@ import (
 	"github.com/go-chassis/go-chassis/core/lager"
 	"github.com/rcrowley/go-metrics"
 	"github.com/stretchr/testify/assert"
+
+	chassisMetrics "github.com/go-chassis/go-chassis/metrics"
 )
 
 var globalConf = `
@@ -69,7 +71,7 @@ func TestCseMonitor2(t *testing.T) {
 	initEnv()
 	assert := assert.New(t)
 	reporter := NewReporter(metrics.DefaultRegistry, "127.0.0.1:8080", http.Header{"Content-Type": []string{"application/json"}}, time.Second, &tls.Config{}, "default", "0.0.1", "Server", "")
-	metricCollector := NewCseCollector("source.Provider.Microservice.SchemaID.OperationId")
+	metricCollector := chassisMetrics.NewCseCollector("source.Provider.Microservice.SchemaID.OperationId")
 	config.SelfServiceName = "testService"
 
 	metricCollector.IncrementAttempts()
