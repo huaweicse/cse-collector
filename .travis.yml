@@ -1,7 +1,7 @@
 language: go
 sudo: required
 go:
-  - 1.8.3
+  - 1.11
 install: true
 
 before_script:
@@ -26,10 +26,10 @@ jobs:
       script:
         - go get -u github.com/jgautheron/goconst/cmd/goconst
         - bash -x scripts/travis/goConstChecker.sh
-    - stage: GoLint Checker
-      script:
-        - go get -u github.com/golang/lint/golint
-        - bash -x scripts/travis/goLintChecker.sh
+#    - stage: GoLint Checker
+#      script:
+#        - go get -u github.com/golang/lint/golint
+#        - bash -x scripts/travis/goLintChecker.sh
     - stage: GoCyclo Checker
       script:
         - go get github.com/fzipp/gocyclo

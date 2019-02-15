@@ -10,7 +10,7 @@ mkdir -p $HOME/gopath/src/github.com/go-chassis/
 cd $HOME/gopath/src/github.com/go-chassis
 git clone http://github.com/go-chassis/go-chassis
 cd $HOME/gopath/src/github.com/go-chassis/go-chassis
-glide install
+GO111MODULE=on go mod vendor
 mkdir -p $HOME/gopath/src/github.com/go-chassis/go-chassis/vendor/github.com/huaweicse/cse-collector/
 rsync -az ${TRAVIS_BUILD_DIR}/ $HOME/gopath/src/github.com/go-chassis/go-chassis/vendor/github.com/huaweicse/cse-collector/
 export TRAVIS_BUILD_DIR=$HOME/gopath/src/github.com/go-chassis/go-chassis/vendor/github.com/huaweicse/cse-collector/

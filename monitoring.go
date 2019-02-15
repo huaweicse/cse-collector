@@ -10,7 +10,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-chassis/go-chassis/pkg/httpclient"
+	"github.com/go-chassis/foundation/httpclient"
 )
 
 // constant for the cse-collector
