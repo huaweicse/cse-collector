@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-chassis/go-chassis/core/lager"
 	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
-	"github.com/rcrowley/go-metrics"
+	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
+	"github.com/go-mesh/openlogging"
 )
 
 var threadCreateProfile = pprof.Lookup("threadcreate")
@@ -77,50 +77,44 @@ func (monitorData *MonitorData) getOrCreateInterfaceInfo(name string) *Interface
 	return interfaceInfo
 }
 
-func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) {
-	var interfaceInfo = monitorData.getOrCreateInterfaceInfo(getInterfaceName(name))
-	switch metric := i.(type) {
-	case metrics.Counter:
-		switch getEventType(name) {
-		case "attempts":
-			interfaceInfo.Total = metric.Count()
-		case "errors":
-			interfaceInfo.Failure = metric.Count()
-		case "shortCircuits":
-			interfaceInfo.ShortCircuited = metric.Count()
-		case "successes":
-			interfaceInfo.successCount = metric.Count()
-		}
+func (monitorData *MonitorData) appendInterfaceInfo(name string, c *metricCollector.DefaultMetricCollector) {
+	var interfaceInfo = monitorData.getOrCreateInterfaceInfo(name)
+	now := time.Now()
+	//attempts:
+	interfaceInfo.Total = int64(c.NumRequests().Sum(now))
+	//errors
+	interfaceInfo.Failure = int64(c.Failures().Sum(now))
+	//shortCircuits
+	interfaceInfo.ShortCircuited = int64(c.ShortCircuits().Sum(now))
+	//successes
+	interfaceInfo.successCount = int64(c.Successes().Sum(now))
 
-		if isCBOpen, err := hystrix.IsCircuitBreakerOpen(getInterfaceName(name)); err != nil {
-			interfaceInfo.IsCircuitBreakerOpen = false
-		} else {
-			interfaceInfo.IsCircuitBreakerOpen = isCBOpen
-		}
-
-		qps := (float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1)))
-		movingAverageFor3Precision, err := strconv.ParseFloat(fmt.Sprintf("%.3f", qps), 64)
-		if err == nil {
-			interfaceInfo.QPS = movingAverageFor3Precision
-		} else {
-			interfaceInfo.QPS = 0
-		}
-
-	case metrics.Timer:
-		t := metric.Snapshot()
-		ps := t.Percentiles([]float64{0.05, 0.25, 0.5, 0.75, 0.90, 0.99, 0.995})
-		switch getEventType(name) {
-		case "runDuration":
-			interfaceInfo.L5 = int(ps[0] / float64(time.Millisecond))
-			interfaceInfo.L25 = int(ps[1] / float64(time.Millisecond))
-			interfaceInfo.L50 = int(ps[2] / float64(time.Millisecond))
-			interfaceInfo.L75 = int(ps[3] / float64(time.Millisecond))
-			interfaceInfo.L90 = int(ps[4] / float64(time.Millisecond))
-			interfaceInfo.L99 = int(ps[5] / float64(time.Millisecond))
-			interfaceInfo.L995 = int(ps[6] / float64(time.Millisecond))
-			interfaceInfo.Latency = int(t.Mean() / float64(time.Millisecond))
-		}
+	if isCBOpen, err := hystrix.IsCircuitBreakerOpen(name); err != nil {
+		interfaceInfo.IsCircuitBreakerOpen = false
+		openlogging.Error("can't get circuit status", openlogging.WithTags(openlogging.Tags{
+			"err":  err.Error(),
+			"name": name,
+		}))
+	} else {
+		interfaceInfo.IsCircuitBreakerOpen = isCBOpen
 	}
+
+	qps := (float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1)))
+	movingAverageFor3Precision, err := strconv.ParseFloat(fmt.Sprintf("%.3f", qps), 64)
+	if err == nil {
+		interfaceInfo.QPS = movingAverageFor3Precision
+	} else {
+		interfaceInfo.QPS = 0
+	}
+	runDuration := c.RunDuration()
+	interfaceInfo.L5 = int(runDuration.Percentile(0.05))
+	interfaceInfo.L25 = int(runDuration.Percentile(0.25))
+	interfaceInfo.L50 = int(float64(runDuration.Percentile(0.5)))
+	interfaceInfo.L75 = int(runDuration.Percentile(0.75))
+	interfaceInfo.L90 = int(runDuration.Percentile(0.90))
+	interfaceInfo.L99 = int(runDuration.Percentile(0.99))
+	interfaceInfo.L995 = int(runDuration.Percentile(0.995))
+	interfaceInfo.Latency = int(runDuration.Mean())
 	interfaceInfo.Rate = 1 //rate is no use any more and must be set to 1
 	if interfaceInfo.Total == 0 {
 		interfaceInfo.FailureRate = 0
@@ -133,22 +127,17 @@ func (monitorData *MonitorData) appendInterfaceInfo(name string, i interface{}) 
 			if err == nil && failureRate > 0 {
 				interfaceInfo.FailureRate = failureRate
 			} else {
-				lager.Logger.Warnf("Error in calculating the failureRate %v, default value(0) is assigned to failureRate", failureRate)
+				openlogging.GetLogger().Warnf("Error in calculating the failureRate %v, default value(0) is assigned to failureRate", failureRate)
 				interfaceInfo.FailureRate = 0
 			}
 		}
 	}
 }
 
-func getInterfaceName(metricName string) string {
+func GetInterfaceName(metricName string) string {
 	command := strings.Split(metricName, ".")
 	return strings.Join(command[:len(command)-1], ".")
 
-}
-
-func getEventType(metricName string) string {
-	command := strings.Split(metricName, ".")
-	return command[len(command)-1]
 }
 
 func getProcessInfo() map[string]interface{} {
