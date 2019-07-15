@@ -1,8 +1,7 @@
 ### Metric Collector for Go-Chassis
 [![Build Status](https://travis-ci.org/ServiceComb/cse-collector.svg?branch=master)](https://travis-ci.org/ServiceComb/cse-collector)   
-This a metric collector for Go-Chassis which collects metrics of the microservices. 
-It can collect metrics for each api's exposed by the micro-services. The same data can be 
-exposed to Huawei CSE Governance Dashboard.
+This is a reporter plugin for go-chassis 
+which report circuit breaker metrics to Huaweicloud.
 
 # How to use 
 
@@ -12,7 +11,7 @@ import _ "github.com/huaweicse/cse-collector"
 ```
 
 # Introdction
-The metrics collected by this collector is listed below:
+The metrics reported by this collector is listed below:
 ```
 attempts
 errors
@@ -50,8 +49,9 @@ CountTimeout         int64   `json:"countTimeout"`
 ```
 
 #### Configurations
-You need to configure your microservice to send the data at regular interval to 
-Huawei CSE Dashboard.
+in chassis.yaml file. 
+You need to configure your micro service to send the data to 
+Huaweicloud ServiceStage.
 
 ```
 cse:
@@ -157,5 +157,3 @@ Every 10sec data will be flushed
     ]
 ]
 ```
-
-If perticular micro service has more than one instance and if request has been sent to perticular instance then only for that instance all the value should change.

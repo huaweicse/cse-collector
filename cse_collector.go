@@ -7,8 +7,6 @@ import (
 	"crypto/tls"
 	"net/http"
 	"time"
-
-	"github.com/rcrowley/go-metrics"
 )
 
 // CseCollectorConfig is a struct to keep monitoring information
@@ -24,6 +22,6 @@ type CseCollectorConfig struct {
 }
 
 // InitializeCseCollector starts the CSE collector in a new Thread
-func InitializeCseCollector(config *CseCollectorConfig, r metrics.Registry, app, version, service, env string) {
-	go NewReporter(r, config.CseMonitorAddr, config.Header, config.TimeInterval, config.TLSConfig, app, version, service, env).Run()
+func InitializeCseCollector(config *CseCollectorConfig, app, version, service, env string) {
+	NewReporter(config.CseMonitorAddr, config.Header, config.TimeInterval, config.TLSConfig, app, version, service, env).Run()
 }

@@ -117,7 +117,7 @@ func (cseMonitorClient *CseMonitorClient) PostMetrics(monitorData MonitorData) (
 		if body, err = ioutil.ReadAll(resp.Body); err != nil {
 			body = []byte(fmt.Sprintf("(could not fetch response body for error: %s)", err))
 		}
-		err = fmt.Errorf("Unable to post to csemonitor: %d %s %s", resp.StatusCode, resp.Status, string(body))
+		err = fmt.Errorf("can't post to csemonitor: %d %s %s", resp.StatusCode, resp.Status, string(body))
 	}
 	return
 }
