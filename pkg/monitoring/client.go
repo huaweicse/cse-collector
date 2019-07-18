@@ -1,11 +1,10 @@
-package metricsink
+package monitoring
 
 import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"net"
 	"net/http"
 	"os"
 	"time"
@@ -15,15 +14,14 @@ import (
 
 // constant for the cse-collector
 const (
-	PostRemoteTimeout = 20 * time.Second
-	IdleConnsPerHost  = 100
-	DefaultTimeout    = time.Second * 20
-	MetricsPath       = "/csemonitor/metric"
-	EnvProjectID      = "CSE_PROJECT_ID"
+	DefaultTimeout = time.Second * 20
+	MetricsPath    = "/csemonitor/metric"
+	EnvProjectID   = "CSE_PROJECT_ID"
 )
 
 // variables for cse-collector
 var (
+	// /v2/{project}/csemonitor/metric
 	MetricServerPath = ""
 )
 
@@ -35,24 +33,7 @@ type CseMonitorClient struct {
 }
 
 // NewCseMonitorClient creates an new client for monitoring
-func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config, version string) (*CseMonitorClient, error) {
-	var apiVersion string
-
-	switch version {
-	case "v1":
-		apiVersion = "v1"
-	case "V1":
-		apiVersion = "v1"
-	case "v2":
-		apiVersion = "v2"
-	case "V2":
-		apiVersion = "v2"
-	default:
-		apiVersion = "v2"
-	}
-	//Update the API Base Path based on the Version
-	updateAPIPath(apiVersion)
-
+func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config) (*CseMonitorClient, error) {
 	c, err := httpclient.GetURLClient(&httpclient.URLClientOption{
 		SSLEnabled:            tlsConfig != nil,
 		TLSConfig:             tlsConfig,
@@ -69,24 +50,14 @@ func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config, 
 }
 
 // updateAPIPath Update the Base PATH and HEADERS Based on the version of MetricServer used.
-func updateAPIPath(apiVersion string) {
-
+func updateAPIPath() {
 	//Check for the env Name in Container to get Domain Name
 	//Default value is  "default"
-	projectID, isExsist := os.LookupEnv(EnvProjectID)
-	if !isExsist {
+	projectID, isExist := os.LookupEnv(EnvProjectID)
+	if !isExist {
 		projectID = "default"
 	}
-	switch apiVersion {
-	case "v2":
-		MetricServerPath = "/v2/" + projectID + MetricsPath
-
-	case "v1":
-		MetricServerPath = "/csemonitor/v1/metric"
-
-	default:
-		MetricServerPath = "/v2/" + projectID + MetricsPath
-	}
+	MetricServerPath = "/v2/" + projectID + MetricsPath
 }
 
 // PostMetrics is a functions which sends the monintoring data to monitoring Server
@@ -120,19 +91,4 @@ func (cseMonitorClient *CseMonitorClient) PostMetrics(monitorData MonitorData) (
 		err = fmt.Errorf("can't post to csemonitor: %d %s %s", resp.StatusCode, resp.Status, string(body))
 	}
 	return
-}
-
-// TransportFor creates an transport object with TLS information
-func TransportFor(tlsconfig *tls.Config) http.RoundTripper {
-
-	return &http.Transport{
-
-		TLSClientConfig:     tlsconfig,
-		MaxIdleConnsPerHost: IdleConnsPerHost,
-		Dial: (&net.Dialer{
-			Timeout:   10 * time.Second,
-			KeepAlive: 30 * time.Second,
-		}).Dial,
-		ResponseHeaderTimeout: PostRemoteTimeout,
-	}
 }
