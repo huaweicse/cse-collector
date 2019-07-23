@@ -1,0 +1,14 @@
+---
+#APPLICATION_ID: CSE optional
+cse:
+  service:
+    registry:
+      address: http://127.0.0.1:30100
+  protocols:
+    rest:
+      listenAddress: 0.0.0.0:5000
+      advertiseAddress: 127.0.0.1:5000
+  handler:
+    chain:
+      Consumer:
+        default: router,bizkeeper-consumer,loadbalance,transport
