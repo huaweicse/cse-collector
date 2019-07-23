@@ -20,7 +20,6 @@ package monitoring
 import (
 	"fmt"
 	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
-	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix/metric_collector"
 	"github.com/go-mesh/openlogging"
 	"math"
 	"strconv"
@@ -69,9 +68,10 @@ func GetInterfaceName(metricName string) string {
 	return strings.Join(command[:len(command)-1], ".")
 
 }
-func (monitorData *MonitorData) AppendInterfaceInfo(name string, c *metricCollector.DefaultMetricCollector) {
-	var interfaceInfo = monitorData.getOrCreateInterfaceInfo(name)
+func (monitorData *MonitorData) AppendInterfaceInfo(cb *hystrix.CircuitBreaker) {
+	var interfaceInfo = monitorData.getOrCreateInterfaceInfo(cb.Name)
 	now := time.Now()
+	c := cb.Metrics.DefaultCollector()
 	//attempts:
 	interfaceInfo.Total = int64(c.NumRequests().Sum(now))
 	//errors
@@ -81,15 +81,7 @@ func (monitorData *MonitorData) AppendInterfaceInfo(name string, c *metricCollec
 	//successes
 	interfaceInfo.successCount = int64(c.Successes().Sum(now))
 
-	if isCBOpen, err := hystrix.IsCircuitBreakerOpen(name); err != nil {
-		interfaceInfo.IsCircuitBreakerOpen = false
-		openlogging.Error("can't get circuit status", openlogging.WithTags(openlogging.Tags{
-			"err":  err.Error(),
-			"name": name,
-		}))
-	} else {
-		interfaceInfo.IsCircuitBreakerOpen = isCBOpen
-	}
+	interfaceInfo.IsCircuitBreakerOpen = cb.IsOpen()
 
 	qps := (float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1)))
 	movingAverageFor3Precision, err := strconv.ParseFloat(fmt.Sprintf("%.3f", qps), 64)

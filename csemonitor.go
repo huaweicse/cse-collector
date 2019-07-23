@@ -26,9 +26,6 @@ func NewReporter(config *CseCollectorConfig) (*Reporter, error) {
 		openlogging.GetLogger().Errorf("Get cse monitor client failed:%s", err)
 		return nil, err
 	}
-	reporter := &Reporter{
-		environment: config.Env,
-	}
 	IsMonitoringConnected = true
 	return &Reporter{
 		environment: config.Env,
@@ -40,6 +37,9 @@ func NewReporter(config *CseCollectorConfig) (*Reporter, error) {
 func (reporter *Reporter) Send(cb *hystrix.CircuitBreaker) {
 	if archaius.GetBool("cse.monitor.client.enable", true) {
 		monitorData := reporter.getData(cb)
+		openlogging.Debug("send metrics", openlogging.WithTags(openlogging.Tags{
+			"data": monitorData,
+		}))
 		err := reporter.c.PostMetrics(monitorData)
 		if err != nil {
 			openlogging.GetLogger().Warnf("unable to report to monitoring server, err: %v", err)
@@ -60,6 +60,6 @@ func (reporter *Reporter) getData(cb *hystrix.CircuitBreaker) monitoring.Monitor
 	monitorData.Memory = getProcessInfo()
 	monitorData.Thread = threadCreateProfile.Count()
 	monitorData.CPU = float64(runtime.NumCPU())
-	monitorData.AppendInterfaceInfo(cb.Name, cb.Metrics.DefaultCollector())
+	monitorData.AppendInterfaceInfo(cb)
 	return *monitorData
 }

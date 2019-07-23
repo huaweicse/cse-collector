@@ -3,7 +3,6 @@ package metricsink
 import (
 	"runtime"
 	"runtime/pprof"
-	"strings"
 )
 
 var threadCreateProfile = pprof.Lookup("threadcreate")

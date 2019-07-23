@@ -42,6 +42,7 @@ func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config) 
 	if err != nil {
 		return nil, err
 	}
+	updateAPIPath()
 	return &CseMonitorClient{
 		Header: header,
 		URL:    url,

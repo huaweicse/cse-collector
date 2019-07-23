@@ -44,7 +44,7 @@ func GetReporter() (*Reporter, error) {
 			openlogging.GetLogger().Warnf("Get Monitoring URL failed, CSE monitoring function disabled, err: %v", err)
 			errResult = err
 		}
-		openlogging.GetLogger().Infof("send metric to monitoring service : %s", monitorServerURL)
+		openlogging.GetLogger().Infof("init monitoring client : %s", monitorServerURL)
 		tlsConfig, err := getTLSForClient(monitorServerURL)
 		if err != nil {
 			openlogging.GetLogger().Errorf("Get %s.%s TLS config failed,error : %s", monitorServerURL, common.Consumer, err)
