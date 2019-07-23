@@ -1,11 +1,14 @@
 
+## before build 
+login to SWR repo
 
 
 ## build
 ```shell
 cd example
 export GOPROXY=https://goproxy.io
-export REPO=swr.cn-east-2.myhuaweicloud.com/tian
+GO111MODULE=on go mod vendor
+export REPO={swr_repo}/{org}
 build_image.sh
 ```
 
