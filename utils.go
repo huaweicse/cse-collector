@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-chassis/go-chassis/core/common"
 	"github.com/go-chassis/go-chassis/core/config"
-	"github.com/go-chassis/go-chassis/core/endpoint-discovery"
+	"github.com/go-chassis/go-chassis/core/endpoint"
 	chassisTLS "github.com/go-chassis/go-chassis/core/tls"
 	"github.com/go-mesh/openlogging"
 )
