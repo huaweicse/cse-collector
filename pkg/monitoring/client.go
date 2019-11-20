@@ -1,6 +1,7 @@
 package monitoring
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
@@ -29,12 +30,12 @@ var (
 type CseMonitorClient struct {
 	Header http.Header
 	URL    string
-	Client *httpclient.URLClient
+	Client *httpclient.Requests
 }
 
 // NewCseMonitorClient creates an new client for monitoring
 func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config) (*CseMonitorClient, error) {
-	c, err := httpclient.GetURLClient(&httpclient.URLClientOption{
+	c, err := httpclient.New(&httpclient.Options{
 		SSLEnabled:            tlsConfig != nil,
 		TLSConfig:             tlsConfig,
 		ResponseHeaderTimeout: DefaultTimeout,
@@ -80,7 +81,7 @@ func (cseMonitorClient *CseMonitorClient) PostMetrics(monitorData MonitorData) (
 		h[k] = v
 	}
 
-	if resp, err = cseMonitorClient.Client.HTTPDo(http.MethodPost, postURL, h, js); err != nil {
+	if resp, err = cseMonitorClient.Client.Do(context.Background(), http.MethodPost, postURL, h, js); err != nil {
 		return
 	}
 	defer resp.Body.Close()

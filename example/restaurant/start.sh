@@ -36,7 +36,7 @@ log_backup_count: 7
 EOM
 
 if [ ! -z "$VERSION" ]; then
-    /bin/echo "Version ENV: $SERVICE_NAME"
+    /bin/echo "Version ENV: $VERSION"
     cat << EOF > ${root_dir}/conf/microservice.yaml
 service_description:
   name: restaurant
