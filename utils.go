@@ -68,7 +68,7 @@ func getAuthHeaders() http.Header {
 func getMonitorEndpoint() (string, error) {
 	monitorEndpoint := config.GlobalDefinition.Cse.Monitor.Client.ServerURI
 	if monitorEndpoint == "" {
-		monitorURL, err := endpoint.GetEndpointFromServiceCenter("default", "CseMonitoring", "latest")
+		monitorURL, err := endpoint.GetEndpoint("default", "CseMonitoring", "latest")
 		if err != nil {
 			openlogging.GetLogger().Warnf("empty monitor server endpoint, please provide the monitor server endpoint, err: %v", err)
 			return "", err
