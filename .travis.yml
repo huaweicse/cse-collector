@@ -36,4 +36,5 @@ jobs:
         - bash scripts/travis/goCycloChecker.sh
     - stage: Unit Test
       script:
+        - export GOPROXY=https://goproxy.io
         - bash scripts/travis/unit_test.sh
