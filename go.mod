@@ -1,11 +1,10 @@
 module github.com/huaweicse/cse-collector
 
 require (
-	github.com/go-chassis/foundation v0.1.0
-	github.com/go-chassis/go-archaius v0.24.0
-	github.com/go-chassis/go-chassis v1.7.6
+	github.com/go-chassis/foundation v0.1.1-0.20191113114104-2b05871e9ec4
+	github.com/go-chassis/go-archaius v1.0.0
+	github.com/go-chassis/go-chassis v1.8.1-0.20191218064704-90f4208e31e1
 	github.com/go-mesh/openlogging v1.0.1
-	github.com/gopherjs/gopherjs v0.0.0-20181103185306-d547d1d9531e // indirect
 	github.com/huaweicse/auth v1.1.2
 )
 
