@@ -23,6 +23,6 @@ import (
 )
 
 func TestGetInterfaceName(t *testing.T) {
-	n := monitoring.GetInterfaceName("Consumer.some.api")
+	n := monitoring.GetInterfaceName("Consumer.service.some.api")
 	t.Log(n)
 }
