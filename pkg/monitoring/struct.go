@@ -83,7 +83,7 @@ func (monitorData *MonitorData) AppendInterfaceInfo(cb *hystrix.CircuitBreaker) 
 
 	interfaceInfo.IsCircuitBreakerOpen = cb.IsOpen()
 
-	qps := (float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1)))
+	qps := float64(interfaceInfo.Total) * (1 - math.Exp(-5.0/60.0/1))
 	movingAverageFor3Precision, err := strconv.ParseFloat(fmt.Sprintf("%.3f", qps), 64)
 	if err == nil {
 		interfaceInfo.QPS = movingAverageFor3Precision
@@ -91,13 +91,13 @@ func (monitorData *MonitorData) AppendInterfaceInfo(cb *hystrix.CircuitBreaker) 
 		interfaceInfo.QPS = 0
 	}
 	runDuration := c.RunDuration()
-	interfaceInfo.L5 = int(runDuration.Percentile(0.05))
-	interfaceInfo.L25 = int(runDuration.Percentile(0.25))
-	interfaceInfo.L50 = int(float64(runDuration.Percentile(0.5)))
-	interfaceInfo.L75 = int(runDuration.Percentile(0.75))
-	interfaceInfo.L90 = int(runDuration.Percentile(0.90))
-	interfaceInfo.L99 = int(runDuration.Percentile(0.99))
-	interfaceInfo.L995 = int(runDuration.Percentile(0.995))
+	interfaceInfo.L5 = int(runDuration.Percentile(5))
+	interfaceInfo.L25 = int(runDuration.Percentile(25))
+	interfaceInfo.L50 = int(runDuration.Percentile(5))
+	interfaceInfo.L75 = int(runDuration.Percentile(75))
+	interfaceInfo.L90 = int(runDuration.Percentile(90))
+	interfaceInfo.L99 = int(runDuration.Percentile(99))
+	interfaceInfo.L995 = int(runDuration.Percentile(99.5))
 	interfaceInfo.Latency = int(runDuration.Mean())
 	interfaceInfo.Rate = 1 //rate is no use any more and must be set to 1
 	if interfaceInfo.Total == 0 {

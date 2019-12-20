@@ -65,49 +65,54 @@ cse:
 
 Every 2 sec data will be posted to monitoring server if serverUri is correct and enable is true
 
-The data formate after post 
+The data format
 ```
-[
-    [
-        {
-            "time": 1526905902632,
-            "appId": "default",
-            "version": "0.0.1",
-            "qps": 0.16,
-            "latency": 0,
-            "failureRate": 0,
-            "total": 2,
-            "breakerRateAgg": 0,
-            "circuitBreakerOpen": false,
-            "failure": 0,
-            "shortCircuited": 0,
-            "semaphoreRejected": 0,
-            "threadPoolRejected": 0,
-            "countTimeout": 0,
-            "l995": 0,
-            "l99": 0,
-            "l90": 0,
-            "l75": 0,
-            "l50": 0,
-            "l25": 0,
-            "l5": 0,
-            "instanceId": "6a0895085cf211e8bb850255ac105551",
-            "thread": 11,
-            "cpu": 4,
-            "memory": {
-                "heapAlloc": 2294040,
-                "heapIdle": 1671168,
-                "heapInUse": 3768320,
-                "heapObjects": 19609,
-                "heapReleased": 0,
-                "heapSys": 5439488
-            },
-            "functionCount": 1,
-            "customs": null,
-            "name": "root1-ThinkPad-T440p"
-        }
-    ]
-]
+{
+  "data": {
+    "appId": "default",
+    "version": "1.0.0",
+    "name": "order",
+    "environment": "",
+    "instance": "order-c3bbef-8457f585dc-c69cz",
+    "thread": 14,
+    "customs": null,
+    "interfaces": [
+      {
+        "name": "Consumer.restaurant.rest",
+        "desc": "Consumer.restaurant.rest",
+        "qps": 0,
+        "latency": 1,
+        "l995": 0,
+        "l99": 0,
+        "l90": 0,
+        "l75": 0,
+        "l50": 0,
+        "l25": 0,
+        "l5": 0,
+        "rate": 1,
+        "total": 0,
+        "failure": 0,
+        "shortCircuited": 0,
+        "circuitBreakerOpen": false,
+        "semaphoreRejected": 0,
+        "threadPoolRejected": 0,
+        "countTimeout": 0,
+        "failureRate": 0
+      }
+    ],
+    "cpu": 4,
+    "memory": {
+      "heapAlloc": 3041688,
+      "heapIdle": 61628416,
+      "heapInUse": 4399104,
+      "heapObjects": 28501,
+      "heapReleased": 61595648,
+      "heapSys": 66027520
+    },
+    "serviceId": "32370e6ed839834a0493dddc3e7a7d5cb6d5db59",
+    "instanceId": "7c91fbb922ef11ea99b30255ac1004a6"
+  }
+}
 
 ```
 

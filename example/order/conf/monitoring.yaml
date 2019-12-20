@@ -1,0 +1,6 @@
+cse:
+  metrics:
+    apiPath: /metrics      # we can also give api path having prefix "/" ,like /someurl/metrics
+    enable: true
+    enableGoRuntimeMetrics: true
+    flushInterval: 10s

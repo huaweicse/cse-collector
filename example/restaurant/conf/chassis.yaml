@@ -2,7 +2,7 @@
 cse:
   service:
     registry:
-      address: http://127.0.0.1:30100 # If type is File then address will be the path of the file
+      address: https://cse.cn-north-1.myhuaweicloud.com # If type is File then address will be the path of the file
   protocols:
     rest:
       listenAddress: 127.0.0.1:5001

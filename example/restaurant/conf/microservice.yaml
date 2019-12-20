@@ -1,5 +1,5 @@
 ---
 #Private property of microservices
 service_description:
-  name: restaurantService
+  name: restaurant
   version: 1.0.0
