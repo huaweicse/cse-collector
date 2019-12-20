@@ -39,6 +39,8 @@ github.com/go-chassis/go-archaius v1.0.0 h1:grSgvtpJsyYk0+1UiSqShF6+Zv0L6SWdsOUN
 github.com/go-chassis/go-archaius v1.0.0/go.mod h1:Px2evF91zbMr78UQ+lwehjEwXelwgvTtHzIeODsBEEE=
 github.com/go-chassis/go-chassis v1.8.1-0.20191218064704-90f4208e31e1 h1:GkJ+ho7LV8Zj74W1OADqJzEhm8nrE6Wjyq790kT/gnk=
 github.com/go-chassis/go-chassis v1.8.1-0.20191218064704-90f4208e31e1/go.mod h1:vI0rU2FNAtGi6owfYKXBVj6cvq633/n+8bqbsVfib7E=
+github.com/go-chassis/go-chassis v1.8.1-0.20191220080831-5b58b80f31bc h1:1lG0Fyr4bQmSwlaBIynu/n2TT7bqVO+XNv/+S+kvmH0=
+github.com/go-chassis/go-chassis v1.8.1-0.20191220080831-5b58b80f31bc/go.mod h1:vI0rU2FNAtGi6owfYKXBVj6cvq633/n+8bqbsVfib7E=
 github.com/go-chassis/go-restful-swagger20 v1.0.2 h1:Zq74EQP7IjlJK/PnYP/rF3Ptk2QskZVPoNgiVwtvpFM=
 github.com/go-chassis/go-restful-swagger20 v1.0.2/go.mod h1:ZK4hlfS6Q6E46ViezAjn6atrzoteyWl1OBEpUBn/36k=
 github.com/go-chassis/paas-lager v1.0.2-0.20190328010332-cf506050ddb2 h1:iORWPbIQ81tJPKWs9TNvcjCQnqvyTlL41F9ILgiTcyM=
