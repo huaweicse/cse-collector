@@ -5,6 +5,7 @@ package metricsink
 
 import (
 	"crypto/tls"
+	"fmt"
 	"github.com/go-chassis/go-chassis/core/common"
 	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
 	"github.com/go-mesh/openlogging"
@@ -64,6 +65,10 @@ func GetReporter() (*Reporter, error) {
 			errResult = err
 		}
 	})
+
+	if reporter == nil {
+		errResult = fmt.Errorf("Reporter is nil")
+	}
 	return reporter, errResult
 }
 
