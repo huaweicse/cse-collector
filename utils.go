@@ -48,11 +48,11 @@ func getTLSForClient(monitorURL string) (*tls.Config, error) {
 }
 
 func getAuthHeaders() http.Header {
-	userName := config.GlobalDefinition.Cse.Monitor.Client.UserName
+	userName := config.GlobalDefinition.ServiceComb.Monitor.Client.UserName
 	if userName == "" {
 		userName = common.DefaultUserName
 	}
-	domainName := config.GlobalDefinition.Cse.Monitor.Client.DomainName
+	domainName := config.GlobalDefinition.ServiceComb.Monitor.Client.DomainName
 	if domainName == "" {
 		domainName = common.DefaultDomainName
 	}
@@ -66,7 +66,7 @@ func getAuthHeaders() http.Header {
 }
 
 func getMonitorEndpoint() (string, error) {
-	monitorEndpoint := config.GlobalDefinition.Cse.Monitor.Client.ServerURI
+	monitorEndpoint := config.GlobalDefinition.ServiceComb.Monitor.Client.ServerURI
 	if monitorEndpoint == "" {
 		monitorURL, err := endpoint.GetEndpoint("default", "CseMonitoring", "latest")
 		if err != nil {
