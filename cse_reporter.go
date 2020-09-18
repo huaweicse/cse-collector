@@ -6,9 +6,9 @@ package metricsink
 import (
 	"crypto/tls"
 	"fmt"
-	"github.com/go-chassis/go-chassis/core/common"
-	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
-	"github.com/go-mesh/openlogging"
+	"github.com/go-chassis/go-chassis/v2/core/common"
+	"github.com/go-chassis/go-chassis/v2/third_party/forked/afex/hystrix-go/hystrix"
+	"github.com/go-chassis/openlog"
 	"net/http"
 	"sync"
 	"time"
@@ -42,15 +42,15 @@ func GetReporter() (*Reporter, error) {
 	initOnce.Do(func() {
 		monitorServerURL, err := getMonitorEndpoint()
 		if err != nil {
-			openlogging.GetLogger().Warnf("Get Monitoring URL failed, CSE monitoring function disabled, err: %v", err)
+			openlog.Warn(fmt.Sprintf("Get Monitoring URL failed, CSE monitoring function disabled, err: %v", err))
 			errResult = err
 			return
 
 		}
-		openlogging.GetLogger().Infof("init monitoring client : %s", monitorServerURL)
+		openlog.Info(fmt.Sprintf("init monitoring client : %s", monitorServerURL))
 		tlsConfig, err := getTLSForClient(monitorServerURL)
 		if err != nil {
-			openlogging.GetLogger().Errorf("Get %s.%s TLS config failed,error : %s", monitorServerURL, common.Consumer, err)
+			openlog.Error(fmt.Sprintf("Get %s.%s TLS config failed,error : %s", monitorServerURL, common.Consumer, err))
 			errResult = err
 		}
 		reporter, err = NewReporter(&CseCollectorConfig{
@@ -59,7 +59,7 @@ func GetReporter() (*Reporter, error) {
 			TLSConfig:      tlsConfig,
 		})
 		if err != nil {
-			openlogging.Error("new reporter failed", openlogging.WithTags(openlogging.Tags{
+			openlog.Error("new reporter failed", openlog.WithTags(openlog.Tags{
 				"err": err.Error(),
 			}))
 			errResult = err
@@ -67,7 +67,7 @@ func GetReporter() (*Reporter, error) {
 	})
 
 	if reporter == nil {
-		errResult = fmt.Errorf("Reporter is nil")
+		errResult = fmt.Errorf("reporter is nil")
 	}
 	return reporter, errResult
 }

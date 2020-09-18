@@ -18,10 +18,10 @@
 package resource
 
 import (
-	"github.com/go-chassis/go-chassis/client/rest"
-	"github.com/go-chassis/go-chassis/core"
-	"github.com/go-chassis/go-chassis/pkg/util/httputil"
-	"github.com/go-chassis/go-chassis/server/restful"
+	"github.com/go-chassis/go-chassis/v2/client/rest"
+	"github.com/go-chassis/go-chassis/v2/core"
+	"github.com/go-chassis/go-chassis/v2/pkg/util/httputil"
+	"github.com/go-chassis/go-chassis/v2/server/restful"
 	"net/http"
 )
 
