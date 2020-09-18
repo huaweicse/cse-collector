@@ -6,11 +6,11 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/go-chassis/go-chassis/core/common"
-	"github.com/go-chassis/go-chassis/core/config"
-	"github.com/go-chassis/go-chassis/core/endpoint"
-	chassisTLS "github.com/go-chassis/go-chassis/core/tls"
-	"github.com/go-mesh/openlogging"
+	"github.com/go-chassis/go-chassis/v2/core/common"
+	"github.com/go-chassis/go-chassis/v2/core/config"
+	"github.com/go-chassis/go-chassis/v2/core/endpoint"
+	chassisTLS "github.com/go-chassis/go-chassis/v2/core/tls"
+	"github.com/go-chassis/openlog"
 )
 
 // constants for header parameters
@@ -25,7 +25,7 @@ const (
 func getTLSForClient(monitorURL string) (*tls.Config, error) {
 	monitorServerURL, err := url.Parse(monitorURL)
 	if err != nil {
-		openlogging.GetLogger().Error("Error occurred while parsing Monitor Server Uri" + err.Error())
+		openlog.GetLogger().Error("Error occurred while parsing Monitor Server Uri" + err.Error())
 		return nil, err
 	}
 	scheme := monitorServerURL.Scheme
@@ -41,8 +41,8 @@ func getTLSForClient(monitorURL string) (*tls.Config, error) {
 		}
 		return nil, err
 	}
-	openlogging.GetLogger().Warnf("%s TLS mode, verify peer: %t, cipher plugin: %s",
-		sslTag, sslConfig.VerifyPeer, sslConfig.CipherPlugin)
+	openlog.Warn(fmt.Sprintf("%s TLS mode, verify peer: %t, cipher plugin: %s",
+		sslTag, sslConfig.VerifyPeer, sslConfig.CipherPlugin))
 
 	return tlsConfig, nil
 }
@@ -70,7 +70,7 @@ func getMonitorEndpoint() (string, error) {
 	if monitorEndpoint == "" {
 		monitorURL, err := endpoint.GetEndpoint("default", "CseMonitoring", "latest")
 		if err != nil {
-			openlogging.GetLogger().Warnf("empty monitor server endpoint, please provide the monitor server endpoint, err: %v", err)
+			openlog.Warn(fmt.Sprintf("empty monitor server endpoint, please provide the monitor server endpoint, err: %v", err))
 			return "", err
 		}
 

@@ -1,8 +1,8 @@
 package resource
 
 import (
-	"github.com/go-chassis/go-chassis/pkg/runtime"
-	"github.com/go-chassis/go-chassis/server/restful"
+	"github.com/go-chassis/go-chassis/v2/pkg/runtime"
+	"github.com/go-chassis/go-chassis/v2/server/restful"
 	"net/http"
 )
 

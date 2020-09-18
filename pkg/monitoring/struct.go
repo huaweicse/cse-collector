@@ -19,8 +19,8 @@ package monitoring
 
 import (
 	"fmt"
-	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
-	"github.com/go-mesh/openlogging"
+	"github.com/go-chassis/go-chassis/v2/third_party/forked/afex/hystrix-go/hystrix"
+	"github.com/go-chassis/openlog"
 	"math"
 	"strconv"
 	"strings"
@@ -111,7 +111,7 @@ func (monitorData *MonitorData) AppendInterfaceInfo(cb *hystrix.CircuitBreaker) 
 			if err == nil && failureRate > 0 {
 				interfaceInfo.FailureRate = failureRate
 			} else {
-				openlogging.GetLogger().Warnf("Error in calculating the failureRate %v, default value(0) is assigned to failureRate", failureRate)
+				openlog.GetLogger().Warnf("Error in calculating the failureRate %v, default value(0) is assigned to failureRate", failureRate)
 				interfaceInfo.FailureRate = 0
 			}
 		}

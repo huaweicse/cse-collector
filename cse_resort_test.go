@@ -19,7 +19,7 @@ package metricsink_test
 
 import (
 	"encoding/json"
-	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
+	"github.com/go-chassis/go-chassis/v2/third_party/forked/afex/hystrix-go/hystrix"
 	"github.com/huaweicse/cse-collector/pkg/monitoring"
 	"testing"
 	"time"

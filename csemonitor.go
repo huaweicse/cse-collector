@@ -1,10 +1,11 @@
 package metricsink
 
 import (
+	"fmt"
 	"github.com/go-chassis/go-archaius"
-	chassisRuntime "github.com/go-chassis/go-chassis/pkg/runtime"
-	"github.com/go-chassis/go-chassis/third_party/forked/afex/hystrix-go/hystrix"
-	"github.com/go-mesh/openlogging"
+	chassisRuntime "github.com/go-chassis/go-chassis/v2/pkg/runtime"
+	"github.com/go-chassis/go-chassis/v2/third_party/forked/afex/hystrix-go/hystrix"
+	"github.com/go-chassis/openlog"
 	"github.com/huaweicse/cse-collector/pkg/monitoring"
 	"os"
 	"runtime"
@@ -23,7 +24,7 @@ type Reporter struct {
 func NewReporter(config *CseCollectorConfig) (*Reporter, error) {
 	c, err := monitoring.NewCseMonitorClient(config.Header, config.CseMonitorAddr, config.TLSConfig)
 	if err != nil {
-		openlogging.GetLogger().Errorf("Get cse monitor client failed:%s", err)
+		openlog.Error(fmt.Sprintf("Get cse monitor client failed:%s", err))
 		return nil, err
 	}
 	IsMonitoringConnected = true
@@ -37,12 +38,12 @@ func NewReporter(config *CseCollectorConfig) (*Reporter, error) {
 func (reporter *Reporter) Send(cb *hystrix.CircuitBreaker) {
 	if archaius.GetBool("cse.monitor.client.enable", true) {
 		monitorData := reporter.getData(cb)
-		openlogging.Debug("send metrics", openlogging.WithTags(openlogging.Tags{
+		openlog.Debug("send metrics", openlog.WithTags(openlog.Tags{
 			"data": monitorData,
 		}))
 		err := reporter.c.PostMetrics(monitorData)
 		if err != nil {
-			openlogging.GetLogger().Warnf("unable to report to monitoring server, err: %v", err)
+			openlog.Warn(fmt.Sprintf("unable to report to monitoring server, err: %v", err))
 		}
 	}
 }
