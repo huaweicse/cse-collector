@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/go-chassis/go-chassis/v2"
 	"github.com/go-chassis/openlog"
-	_ "github.com/huaweicse/auth/adaptor/gochassis"
+	_ "github.com/go-chassis/go-chassis-cloud/provider/huawei/engine"
 	_ "github.com/huaweicse/cse-collector"
 	"github.com/huaweicse/cse-collector/example/order/resource"
 	"log"
