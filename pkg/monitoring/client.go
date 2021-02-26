@@ -36,7 +36,6 @@ type CseMonitorClient struct {
 // NewCseMonitorClient creates an new client for monitoring
 func NewCseMonitorClient(header http.Header, url string, tlsConfig *tls.Config) (*CseMonitorClient, error) {
 	c, err := httpclient.New(&httpclient.Options{
-		SSLEnabled:            tlsConfig != nil,
 		TLSConfig:             tlsConfig,
 		ResponseHeaderTimeout: DefaultTimeout,
 	})

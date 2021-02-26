@@ -111,7 +111,7 @@ func (monitorData *MonitorData) AppendInterfaceInfo(cb *hystrix.CircuitBreaker) 
 			if err == nil && failureRate > 0 {
 				interfaceInfo.FailureRate = failureRate
 			} else {
-				openlog.GetLogger().Warnf("Error in calculating the failureRate %v, default value(0) is assigned to failureRate", failureRate)
+				openlog.Warn(fmt.Sprintf("Error in calculating the failureRate %v, default value(0) is assigned to failureRate", failureRate))
 				interfaceInfo.FailureRate = 0
 			}
 		}
